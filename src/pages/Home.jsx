@@ -1,53 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Star, Heart, ChevronLeft, ChevronRight, Tag, Truck, Shield, RefreshCw, Sparkles, Droplets, Zap, Award, Leaf, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import useStore, { allProducts } from './dummyData';
 
-// Mock data with Unsplash images
-const featuredProducts = [
-  {
-    id: 1,
-    name: "Professional Floor Cleaner",
-    price: 249.99,
-    originalPrice: 299.99,
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400&h=400&fit=crop&crop=center",
-    rating: 4.8,
-    reviews: 124,
-    badge: "Best Seller",
-    category: "Floor Care"
-  },
-  {
-    id: 2,
-    name: "Multi-Surface Disinfectant",
-    price: 189.99,
-    originalPrice: 229.99,
-    image: "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400&h=400&fit=crop&crop=center",
-    rating: 4.6,
-    reviews: 89,
-    badge: "Antibacterial",
-    category: "Disinfectants"
-  },
-  {
-    id: 3,
-    name: "Eco-Friendly Laundry Detergent",
-    price: 159.99,
-    originalPrice: 199.99,
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop&crop=center",
-    rating: 4.9,
-    reviews: 156,
-    badge: "Eco-Friendly",
-    category: "Laundry"
-  },
-  {
-    id: 4,
-    name: "Industrial Cleaning Kit",
-    price: 899.99,
-    originalPrice: 1049.99,
-    image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=400&h=400&fit=crop&crop=center",
-    rating: 4.7,
-    reviews: 67,
-    badge: "Pro Choice",
-    category: "Commercial"
-  }
-];
+// Filter featured products from all products
+const featuredProducts = allProducts.filter(product => product.promoted);
 
 const promotions = [
   {
@@ -88,10 +45,11 @@ const categories = [
 ];
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  const { cartItems, addToCart } = useStore();
   const [currentPromo, setCurrentPromo] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState(new Set());
-  const [cartItems, setCartItems] = useState(new Set());
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -110,10 +68,6 @@ const HomePage = () => {
       }
       return newFavorites;
     });
-  };
-
-  const addToCart = (productId) => {
-    setCartItems(prev => new Set([...prev, productId]));
   };
 
   const ProductCard = ({ product }) => {
@@ -164,7 +118,7 @@ const HomePage = () => {
 
           {/* Quick Add to Cart */}
           <button
-            onClick={() => addToCart(product.id)}
+            onClick={() => addToCart(product.id)} // Only pass the ID
             className="absolute bottom-4 left-4 right-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:from-cyan-600 hover:to-blue-700 flex items-center justify-center gap-2 font-medium shadow-lg"
           >
             <ShoppingCart className="w-4 h-4" />
@@ -198,35 +152,27 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-teal-50">
-      {/* Decorative Background Pattern */}
-      <div className="fixed inset-0 opacity-30 pointer-events-none">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '60px 60px'
-        }} />
-      </div>
-
       {/* Header */}
       <header className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-cyan-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <div className="flex items-center gap-2">
               <div className="p-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl">
-                <Sparkles className="w-6 h-6 text-white" />
+                <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
-                CleanBright
+              <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
+                BestBrightness
               </h1>
             </div>
 
-            {/* Search Bar */}
-            <div className="flex-1 max-w-2xl mx-8">
+            {/* Search Bar - Hide on mobile */}
+            <div className="hidden md:block flex-1 max-w-2xl mx-8">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-500 w-5 h-5" />
                 <input
                   type="text"
-                  placeholder="Search for cleaning products, disinfectants..."
+                  placeholder="Search for cleaning products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 border border-cyan-200 rounded-xl focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none transition-all duration-200 bg-white/90 backdrop-blur-sm"
@@ -235,21 +181,42 @@ const HomePage = () => {
             </div>
 
             {/* Header Actions */}
-            <div className="flex items-center gap-4">
-              <button className="p-2 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-xl transition-colors">
-                <Heart className="w-6 h-6" />
+            <div className="flex items-center gap-2 md:gap-4">
+              {/* Mobile Search Button */}
+              <button className="md:hidden p-2 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-xl transition-colors">
+                <Search className="w-5 h-5" />
               </button>
-              <button className="relative p-2 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-xl transition-colors">
-                <ShoppingCart className="w-6 h-6" />
-                {cartItems.size > 0 && (
+              <button className="p-2 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-xl transition-colors">
+                <Heart className="w-5 h-5" />
+              </button>
+              <button 
+                onClick={() => navigate('/cart')}
+                className="relative p-2 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-xl transition-colors"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {cartItems.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-400 to-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
-                    {cartItems.size}
+                    {cartItems.length}
                   </span>
                 )}
               </button>
-              <button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-2 rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-lg">
+              <button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-4 md:px-6 py-2 rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-lg text-sm md:text-base">
                 Sign In
               </button>
+            </div>
+          </div>
+
+          {/* Mobile Search Bar */}
+          <div className="md:hidden py-3">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-500 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-2 border border-cyan-200 rounded-xl focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none transition-all duration-200 bg-white/90 backdrop-blur-sm"
+              />
             </div>
           </div>
         </div>
@@ -381,7 +348,10 @@ const HomePage = () => {
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Featured Products</h2>
                 <p className="text-gray-600 text-lg">Premium cleaning solutions trusted by professionals</p>
               </div>
-              <button className="text-cyan-600 hover:text-cyan-800 font-semibold flex items-center gap-2 bg-white/80 px-4 py-2 rounded-xl hover:bg-white transition-all">
+              <button 
+                onClick={() => navigate('/products')}
+                className="text-cyan-600 hover:text-cyan-800 font-semibold flex items-center gap-2 bg-white/80 px-4 py-2 rounded-xl hover:bg-white transition-all"
+              >
                 View All Products
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -476,7 +446,7 @@ const HomePage = () => {
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                  CleanBright Solutions
+                  BestBrightness Solutions
                 </h3>
               </div>
               <p className="text-gray-400 mb-6 leading-relaxed">
@@ -554,7 +524,7 @@ const HomePage = () => {
           <div className="border-t border-gray-800 mt-12 pt-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <p className="text-gray-400 text-sm">
-                &copy; 2025 CleanBright Solutions. All rights reserved. Professional cleaning supplies for a healthier tomorrow.
+                &copy; 2025 BestBrightness Solutions. All rights reserved. Professional cleaning supplies for a healthier tomorrow.
               </p>
               <div className="flex items-center gap-6 text-sm text-gray-500">
                 <span className="flex items-center gap-2">
