@@ -1,0 +1,172 @@
+**AfriXchange Marketplace - Comprehensive Specification**
+
+---
+
+### 🌿 Overview
+
+**AfriXchange** is a B2B digital marketplace designed to connect South Africa's agricultural community—including farmers, retail stores, cooperatives, independent businesses, and bulk buyers—through innovative technology and sustainable trade practices. It enables verified users to list, browse, negotiate, and transact on a secure and efficient platform that supports growth and market access for all agricultural stakeholders.
+
+---
+
+### 📁 File Structure (Frontend)
+
+```plaintext
+AfriXchange/
+├── public/
+│   └── index.html
+├── src/
+│   ├── assets/                        # Static assets
+│   ├── components/                    # Reusable components
+│   │   ├── Layout/                    # Navbar, Footer, Sidebar
+│   │   ├── ProductCard.jsx
+│   │   ├── BusinessProfileCard.jsx
+│   │   ├── CategoryFilter.jsx
+│   │   ├── BidDialog.jsx
+│   │   └── WalletSummary.jsx
+│   ├── features/                      # Business logic grouped by domain
+│   │   ├── auth/
+│   │   │   ├── authSlice.js
+│   │   │   ├── LoginForm.jsx
+│   │   │   └── RegisterForm.jsx
+│   │   ├── users/
+│   │   │   ├── userSlice.js
+│   │   │   ├── AdminUsersPanel.jsx
+│   │   │   └── UserProfileForm.jsx
+│   │   ├── products/
+│   │   │   ├── productSlice.js
+│   │   │   ├── ProductForm.jsx
+│   │   │   ├── ProductList.jsx
+│   │   │   └── ProductDetail.jsx
+│   │   ├── ongoing/
+│   │   │   ├── ongoingSlice.js
+│   │   │   ├── OngoingForm.jsx
+│   │   │   ├── OngoingSupplyList.jsx
+│   │   │   └── OngoingDetail.jsx
+│   │   ├── orders/
+│   │   │   ├── orderSlice.js
+│   │   │   ├── OrderList.jsx
+│   │   │   └── OrderDetail.jsx
+│   │   ├── wallet/
+│   │   │   ├── walletSlice.js
+│   │   │   └── WalletHistory.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Marketplace.jsx
+│   │   ├── ProductDetailPage.jsx
+│   │   ├── OngoingSupplyPage.jsx
+│   │   ├── BusinessProfilePage.jsx
+│   │   ├── OrdersPage.jsx
+│   │   ├── WalletPage.jsx
+│   │   ├── Admin/
+│   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── ManageUsers.jsx
+│   │   │   ├── ManageListings.jsx
+│   │   │   ├── ReviewModeration.jsx
+│   │   │   └── AnalyticsPanel.jsx
+│   ├── services/                      # Firebase functions and API wrappers
+│   │   ├── firebase.js
+│   │   ├── firestoreService.js
+│   │   ├── authService.js
+│   │   └── walletService.js
+│   ├── styles/
+│   │   ├── variables.scss
+│   │   └── glass.scss
+│   ├── App.jsx
+│   └── main.jsx
+├── tailwind.config.js
+├── vite.config.js
+└── package.json
+```
+
+---
+
+### 🔐 Firebase Backend (Realtime + Serverless)
+
+#### 🧩 Services Used
+
+* **Firestore** – real-time database
+* **Firebase Authentication** – user roles (admin, supplier, buyer)
+* **Firebase Storage** – for product and profile images
+* **Cloud Functions** – business logic for marketplace wallet & moderation
+
+---
+
+### 🗂️ Firestore Database Structure
+
+```plaintext
+firestore.root
+├── users/{userId}
+│   ├── role: "buyer" | "supplier" | "admin_super" | "admin_moderator"
+│   ├── email, name, phone, verified
+│   ├── businessProfile: { name, location, bio, deliveryRadius, logoURL }
+│   ├── walletBalance, location
+│   └── createdAt
+│
+├── products/{productId}
+│   ├── sellerId, title, category, unit, price, quantity, negotiable
+│   ├── images: [url1, url2]
+│   ├── availabilityDate, bulkPricingTiers
+│   └── createdAt
+│
+├── ongoingSupplies/{supplyId}
+│   ├── sellerId, title, productType, totalQuantity, deliveryFrequency
+│   ├── durationMonths, pricePerUnit, description, status
+│   ├── bids: [{ userId, amount, comment, timestamp }]
+│   └── acceptedBidId, createdAt
+│
+├── orders/{orderId}
+│   ├── buyerId, sellerId, productId OR supplyId
+│   ├── quantity, totalPrice, paymentStatus
+│   ├── status: "Pending" | "Accepted" | "Dispatched" | "Delivered" | "Cancelled"
+│   ├── deliveryMilestones: [
+│   │     { date, quantity, status, note }
+│   │   ]
+│   └── timestamp
+│
+├── transactions/{txnId}
+│   ├── from: userId, to: "market_wallet"
+│   ├── type: "deposit" | "refund" | "payout"
+│   ├── orderId, amount, timestamp, status
+│
+├── reviews/{reviewId}
+│   ├── reviewerId, targetId (user/product), rating, comment
+│   └── timestamp
+```
+
+---
+
+### 🔐 Firebase Auth Rules Summary
+
+* Authenticated access only
+* Role-based access via `users/{userId}.role`
+* Location-based filtering for region-specific discovery
+* Example rule for suppliers:
+
+```js
+match /products/{productId} {
+  allow read: if true;
+  allow write: if request.auth != null &&
+    get(/databases/$(default)/documents/users/$(request.auth.uid)).data.role == "supplier";
+}
+```
+
+---
+
+### ⚙️ Firebase Wallet & Admin Roles
+
+* **Marketplace Wallet** holds buyer payments until delivery is confirmed
+* Admins have two types:
+
+  * `admin_super`: full access to all users, payouts, analytics
+  * `admin_moderator`: can approve listings, resolve reviews, handle reports
+
+**Cloud Functions:**
+
+* On order → funds moved to `market_wallet`
+* On delivery confirmation → release to seller wallet
+* On dispute → send refund or flag for admin
+* On payout request → verify and process to seller account
+
+---
+
+Would you like to add mock data templates, Firestore rules files, or backend logic next?

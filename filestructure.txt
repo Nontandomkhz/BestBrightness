@@ -1,0 +1,76 @@
+
+
+### 📁 File Structure (Frontend)
+
+
+AfriXchange/
+├── public/
+│   └── index.html
+├── src/
+│   ├── assets/                        # Static assets
+│   ├── components/                    # Reusable components
+│   │   ├── Layout/                    # Navbar, Footer, Sidebar
+│   │   ├── ProductCard.jsx
+│   │   ├── BusinessProfileCard.jsx
+│   │   ├── CategoryFilter.jsx
+│   │   ├── BidDialog.jsx
+│   │   └── WalletSummary.jsx
+│   ├── features/                      # Business logic grouped by domain
+│   │   ├── auth/
+│   │   │   ├── authSlice.js
+│   │   │   ├── LoginForm.jsx
+│   │   │   └── RegisterForm.jsx
+│   │   ├── users/
+│   │   │   ├── userSlice.js
+│   │   │   ├── AdminUsersPanel.jsx
+│   │   │   └── UserProfileForm.jsx
+│   │   ├── products/
+│   │   │   ├── productSlice.js
+│   │   │   ├── ProductForm.jsx
+│   │   │   ├── ProductList.jsx
+│   │   │   └── ProductDetail.jsx
+│   │   ├── ongoing/
+│   │   │   ├── ongoingSlice.js
+│   │   │   ├── OngoingForm.jsx
+│   │   │   ├── OngoingSupplyList.jsx
+│   │   │   └── OngoingDetail.jsx
+│   │   ├── orders/
+│   │   │   ├── orderSlice.js
+│   │   │   ├── OrderList.jsx
+│   │   │   └── OrderDetail.jsx
+│   │   ├── wallet/
+│   │   │   ├── walletSlice.js
+│   │   │   └── WalletHistory.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Marketplace.jsx
+│   │   ├── ProductDetailPage.jsx
+│   │   ├── OngoingSupplyPage.jsx
+│   │   ├── BusinessProfilePage.jsx
+│   │   ├── OrdersPage.jsx
+│   │   ├── WalletPage.jsx
+│   │   ├── Admin/
+│   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── ManageUsers.jsx
+│   │   │   ├── ManageListings.jsx
+│   │   │   ├── ReviewModeration.jsx
+│   │   │   └── AnalyticsPanel.jsx
+│   │   ├── routes/
+│   │   │   ├── AppRoutes.jsx
+│   │   │   └── ProtectedRoute.jsx
+│   │   │  
+│   ├── services/                      # Firebase functions and API wrappers
+│   │   ├── firebase.js
+│   │   ├── firestoreService.js
+│   │   ├── authService.js
+│   │   └── walletService.js
+│   ├── styles/
+│   │   ├── variables.scss
+│   │   └── glass.scss
+│   ├── App.jsx
+│   └── main.jsx
+├── tailwind.config.js
+├── vite.config.js
+└── package.json
+
+
