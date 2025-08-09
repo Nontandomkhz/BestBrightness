@@ -425,200 +425,185 @@ CREATE INDEX idx_carts_session ON shopping_carts(session_id);
 
 ---
 
+
+
 ## 👥 Customer User Stories
 
 ### Authentication & Account Management
-
-**Epic: User Authentication**
 
 **Story C-001**: Account Registration
 - **As a** potential customer
 - **I want to** create a new account with email verification
 - **So that** I can access personalized features and make purchases
-- **Acceptance Criteria:**
-  - User can enter email, password, first name, and last name
-  - Password must meet security requirements (8+ chars, mixed case, number, symbol)
-  - Email verification link is sent to user's email
-  - User cannot login until email is verified
-  - User receives welcome email after verification
-  - Form validates input in real-time
-  - Clear error messages for validation failures
+- **Implementation Files:**
+  - **Page:** `src/pages/auth/Register.jsx`
+  - **Components:** `src/components/forms/RegisterForm.jsx`
+  - **Services:** `src/services/authService.js`
+  - **Store:** `src/store/authSlice.js`
+  - **Database:** `users`, `user_profiles`
 
 **Story C-002**: Secure Login
 - **As a** returning customer
 - **I want to** securely login to my account
 - **So that** I can access my personal information and order history
-- **Acceptance Criteria:**
-  - User can login with email and password
-  - Account is locked after 5 failed attempts for 30 minutes
-  - "Remember me" option keeps user logged in for 30 days
-  - User is redirected to intended page after login
-  - Clear error messages for invalid credentials
-  - Loading states during authentication
+- **Implementation Files:**
+  - **Page:** `src/pages/auth/Login.jsx`
+  - **Components:** `src/components/forms/LoginForm.jsx`
+  - **Services:** `src/services/authService.js`
+  - **Store:** `src/store/authSlice.js`
+  - **Routes:** `src/routes/PrivateRoute.jsx`, `src/routes/RoleRoute.jsx`
+  - **Database:** `users`, `audit_logs`
 
 **Story C-003**: Password Reset
 - **As a** customer who forgot my password
 - **I want to** reset my password via email
 - **So that** I can regain access to my account
-- **Acceptance Criteria:**
-  - User can request password reset with email address
-  - Reset link expires after 1 hour
-  - User can set new password that meets security requirements
-  - Old password is invalidated after successful reset
-  - User receives confirmation email after reset
-  - Reset link can only be used once
+- **Implementation Files:**
+  - **Page:** `src/pages/auth/Login.jsx` (forgot password link)
+  - **Components:** `src/components/forms/PasswordResetForm.jsx`
+  - **Services:** `src/services/authService.js`
+  - **Database:** `users` (password_reset_token, password_reset_expires)
 
 **Story C-004**: Profile Management
 - **As a** logged-in customer
 - **I want to** update my profile information
 - **So that** I can keep my account details current
-- **Acceptance Criteria:**
-  - User can update first name, last name, phone, and avatar
-  - Email changes require verification of new email
-  - User can set marketing preferences
-  - Changes are saved in real-time with success feedback
-  - User can view account activity log
-  - Password change requires current password verification
+- **Implementation Files:**
+  - **Page:** `src/pages/customer/Account.jsx`
+  - **Components:** `src/components/forms/ProfileForm.jsx`
+  - **Services:** `src/services/authService.js`
+  - **Hooks:** `src/hooks/useAuth.js`
+  - **Store:** `src/store/authSlice.js`
+  - **Database:** `users`, `user_profiles`
 
 ### Product Discovery & Browsing
-
-**Epic: Product Catalog**
 
 **Story C-005**: Homepage Experience
 - **As a** visitor
 - **I want to** see an engaging homepage with featured products
 - **So that** I can quickly discover popular and recommended items
-- **Acceptance Criteria:**
-  - Homepage displays featured products carousel
-  - Current promotions are prominently displayed
-  - Category navigation is easily accessible
-  - Search bar is prominently placed
-  - Page loads in under 3 seconds
-  - Mobile-responsive design
-  - Social proof elements (reviews, ratings)
+- **Implementation Files:**
+  - **Page:** `src/pages/customer/Home.jsx`
+  - **Components:** 
+    - `src/components/FeaturedProducts.jsx`
+    - `src/components/ProductCarousel.jsx`
+    - `src/components/PromotionBanner.jsx`
+  - **Services:** `src/services/productService.js`
+  - **Hooks:** `src/hooks/useProducts.js`
+  - **Database:** `products`, `categories`
 
 **Story C-006**: Product Search
 - **As a** customer
 - **I want to** search for products by name, category, or keywords
 - **So that** I can quickly find what I'm looking for
-- **Acceptance Criteria:**
-  - Search returns relevant results sorted by relevance
-  - Auto-suggestions appear as user types
-  - Search handles typos and partial matches
-  - No results page suggests alternatives
-  - Search history is saved for logged-in users
-  - Search filters can be applied to results
-  - Search analytics track popular queries
+- **Implementation Files:**
+  - **Page:** `src/pages/customer/Products.jsx`
+  - **Components:** 
+    - `src/components/forms/SearchBox.jsx`
+    - `src/components/SearchResults.jsx`
+    - `src/components/SearchSuggestions.jsx`
+  - **Services:** `src/services/productService.js`
+  - **Hooks:** `src/hooks/useProducts.js`, `src/hooks/useDebounce.js`
+  - **Store:** `src/store/productSlice.js`
+  - **Database:** `products`, `categories`
 
 **Story C-007**: Product Listing
 - **As a** customer
 - **I want to** browse products in grid and list views
 - **So that** I can compare products efficiently
-- **Acceptance Criteria:**
-  - Toggle between grid (3x3) and list views
-  - Products show image, name, price, rating
-  - Pagination loads 24 products per page
-  - Sort options: price, name, rating, newest
-  - Filter by category, price range, brand, rating
-  - View count and "Add to Cart" on hover
-  - Lazy loading for images
+- **Implementation Files:**
+  - **Page:** `src/pages/customer/Products.jsx`
+  - **Components:** 
+    - `src/components/ProductGrid.jsx`
+    - `src/components/ProductCard.jsx`
+    - `src/components/forms/FilterDropdown.jsx`
+    - `src/components/ui/Pagination.jsx`
+  - **Services:** `src/services/productService.js`
+  - **Hooks:** `src/hooks/useProducts.js`, `src/hooks/usePagination.js`
+  - **Store:** `src/store/productSlice.js`
+  - **Database:** `products`, `categories`, `product_images`
 
 **Story C-008**: Product Details
 - **As a** customer
 - **I want to** view detailed product information
 - **So that** I can make informed purchasing decisions
-- **Database Models:** `products`, `product_images`, `reviews`, `inventory`
-- **Frontend Pages:** `src/pages/customer/ProductDetails.jsx`
-- **Components:** `src/components/ProductGallery.jsx`, `src/components/ProductReviews.jsx`
-- **Services:** `src/services/productService.js`
-- **Acceptance Criteria:**
-  - High-quality product images with zoom functionality
-  - Detailed product description and specifications
-  - Customer reviews and ratings display
-  - Related products recommendations
-  - Stock availability indicator
-  - Price history graph (if available)
-  - Social sharing buttons
-  - Breadcrumb navigation
+- **Implementation Files:**
+  - **Page:** `src/pages/customer/ProductDetails.jsx`
+  - **Components:** 
+    - `src/components/ProductGallery.jsx`
+    - `src/components/ProductInfo.jsx`
+    - `src/components/ProductReviews.jsx`
+    - `src/components/RelatedProducts.jsx`
+    - `src/components/AddToCartButton.jsx`
+  - **Services:** `src/services/productService.js`
+  - **Hooks:** `src/hooks/useProducts.js`, `src/hooks/useCart.js`
+  - **Store:** `src/store/productSlice.js`, `src/store/cartSlice.js`
+  - **Database:** `products`, `product_images`, `reviews`, `inventory`
 
 ### Shopping Cart & Checkout
-
-**Epic: Shopping Experience**
 
 **Story C-009**: Add to Cart
 - **As a** customer
 - **I want to** add products to my shopping cart
 - **So that** I can collect items before purchase
-- **Database Models:** `shopping_carts`, `cart_items`, `products`, `inventory`
-- **Frontend Pages:** `src/pages/customer/Products.jsx`, `src/pages/customer/ProductDetails.jsx`
-- **Components:** `src/components/AddToCartButton.jsx`, `src/components/CartIcon.jsx`
-- **Services:** `src/services/cartService.js`
-- **Hooks:** `src/hooks/useCart.js`
-- **Store:** `src/store/cartSlice.js`
-- **Acceptance Criteria:**
-  - One-click add to cart from product listing
-  - Quantity selector on product detail page
-  - Cart icon updates with item count
-  - Success animation/feedback when item added
-  - Prevents adding out-of-stock items
-  - Guest users can add items (session-based cart)
-  - Cart persists across browser sessions for logged-in users
+- **Implementation Files:**
+  - **Components:** 
+    - `src/components/AddToCartButton.jsx`
+    - `src/components/QuantitySelector.jsx`
+    - `src/components/layout/CartIcon.jsx`
+  - **Services:** `src/services/cartService.js`
+  - **Hooks:** `src/hooks/useCart.js`
+  - **Store:** `src/store/cartSlice.js`
+  - **Database:** `shopping_carts`, `cart_items`, `products`, `inventory`
 
 **Story C-010**: Shopping Cart Management
 - **As a** customer
 - **I want to** view and modify items in my cart
 - **So that** I can review my selections before checkout
-- **Database Models:** `shopping_carts`, `cart_items`, `products`, `discounts`
-- **Frontend Pages:** `src/pages/customer/Cart.jsx`
-- **Components:** `src/components/CartItem.jsx`, `src/components/CartSummary.jsx`
-- **Services:** `src/services/cartService.js`
-- **Hooks:** `src/hooks/useCart.js`
-- **Store:** `src/store/cartSlice.js`
-- **Acceptance Criteria:**
-  - Display all cart items with images, names, prices
-  - Update quantity with + / - buttons
-  - Remove individual items
-  - Calculate subtotal, tax, and total
-  - Apply discount codes
-  - Save for later functionality
-  - Empty cart state with suggested products
-  - Real-time price updates
+- **Implementation Files:**
+  - **Page:** `src/pages/customer/Cart.jsx`
+  - **Components:** 
+    - `src/components/CartItem.jsx`
+    - `src/components/CartSummary.jsx`
+    - `src/components/DiscountCodeForm.jsx`
+    - `src/components/SaveForLater.jsx`
+  - **Services:** `src/services/cartService.js`
+  - **Hooks:** `src/hooks/useCart.js`
+  - **Store:** `src/store/cartSlice.js`
+  - **Database:** `shopping_carts`, `cart_items`, `products`, `discounts`
 
 **Story C-011**: Checkout Process
 - **As a** customer
 - **I want to** complete my purchase securely
 - **So that** I can receive my ordered products
-- **Database Models:** `orders`, `order_items`, `addresses`, `payments`, `discounts`
-- **Frontend Pages:** `src/pages/customer/Checkout.jsx`
-- **Components:** `src/components/CheckoutForm.jsx`, `src/components/PaymentForm.jsx`, `src/components/AddressForm.jsx`
-- **Services:** `src/services/orderService.js`, `src/services/paymentService.js`
-- **Acceptance Criteria:**
-  - Multi-step checkout (shipping, payment, review)
-  - Guest checkout option
-  - Address book for logged-in users
-  - Multiple payment methods (Yoco, Paystack)
-  - Order summary with itemized breakdown
-  - Terms and conditions acceptance
-  - Order confirmation page with tracking number
-  - Email confirmation sent
+- **Implementation Files:**
+  - **Page:** `src/pages/customer/Checkout.jsx`
+  - **Components:** 
+    - `src/components/forms/CheckoutForm.jsx`
+    - `src/components/forms/AddressForm.jsx`
+    - `src/components/PaymentForm.jsx`
+    - `src/components/OrderSummary.jsx`
+    - `src/components/CheckoutSteps.jsx`
+  - **Services:** `src/services/orderService.js`, `src/services/paymentService.js`
+  - **Hooks:** `src/hooks/useOrders.js`
+  - **Store:** `src/store/orderSlice.js`
+  - **Database:** `orders`, `order_items`, `addresses`, `payments`, `discounts`
 
 **Story C-012**: Order History
 - **As a** customer
 - **I want to** view my order history
 - **So that** I can track purchases and reorder items
-- **Database Models:** `orders`, `order_items`, `products`, `payments`
-- **Frontend Pages:** `src/pages/customer/Orders.jsx`
-- **Components:** `src/components/OrderCard.jsx`, `src/components/OrderDetails.jsx`
-- **Services:** `src/services/orderService.js`
-- **Hooks:** `src/hooks/useOrders.js`
-- **Acceptance Criteria:**
-  - List all orders with status and total
-  - Filter by date range and status
-  - Click to view detailed order information
-  - Reorder functionality for past orders
-  - Download invoices as PDF
-  - Track shipment status
-  - Return/refund request initiation
+- **Implementation Files:**
+  - **Page:** `src/pages/customer/Orders.jsx`
+  - **Components:** 
+    - `src/components/OrderCard.jsx`
+    - `src/components/OrderDetails.jsx`
+    - `src/components/OrderStatus.jsx`
+    - `src/components/ReorderButton.jsx`
+  - **Services:** `src/services/orderService.js`
+  - **Hooks:** `src/hooks/useOrders.js`
+  - **Store:** `src/store/orderSlice.js`
+  - **Database:** `orders`, `order_items`, `products`, `payments`
 
 ---
 
@@ -626,116 +611,98 @@ CREATE INDEX idx_carts_session ON shopping_carts(session_id);
 
 ### POS Operations
 
-**Epic: Point of Sale System**
-
 **Story CA-001**: Cashier Authentication
 - **As a** cashier
 - **I want to** securely login to the POS system
 - **So that** I can access cashier-specific functions
-- **Database Models:** `users`, `user_profiles`, `audit_logs`
-- **Frontend Pages:** `src/pages/auth/Login.jsx`
-- **Components:** `src/components/forms/LoginForm.jsx`
-- **Services:** `src/services/authService.js`
-- **Store:** `src/store/authSlice.js`
-- **Routes:** `src/routes/RoleRoute.jsx`
-- **Acceptance Criteria:**
-  - Role-based login redirects to cashier dashboard
-  - Session timeout after 8 hours of inactivity
-  - Login attempts logged for security
-  - Different UI theme for cashier interface
-  - Quick user switching for shared terminals
-  - Shift start/end tracking
+- **Implementation Files:**
+  - **Page:** `src/pages/auth/Login.jsx` (shared login page)
+  - **Components:** `src/components/forms/LoginForm.jsx`
+  - **Services:** `src/services/authService.js`
+  - **Store:** `src/store/authSlice.js`
+  - **Routes:** `src/routes/RoleRoute.jsx`
+  - **Database:** `users`, `user_profiles`, `audit_logs`
 
 **Story CA-002**: POS Dashboard
 - **As a** cashier
 - **I want to** see a dashboard with key information
 - **So that** I can quickly access important functions
-- **Database Models:** `orders`, `payments`, `products`, `inventory`
-- **Frontend Pages:** `src/pages/cashier/Dashboard.jsx`
-- **Components:** `src/components/DashboardStats.jsx`, `src/components/QuickActions.jsx`
-- **Services:** `src/services/reportService.js`
-- **Acceptance Criteria:**
-  - Today's sales summary
-  - Active promotions display
-  - Low stock alerts
-  - Quick links to POS and reports
-  - Shift summary information
-  - Recent transactions list
+- **Implementation Files:**
+  - **Page:** `src/pages/cashier/Dashboard.jsx`
+  - **Components:** 
+    - `src/components/DashboardStats.jsx`
+    - `src/components/QuickActions.jsx`
+    - `src/components/TodaysSales.jsx`
+    - `src/components/LowStockAlerts.jsx`
+  - **Services:** `src/services/reportService.js`
+  - **Hooks:** `src/hooks/useReports.js`
+  - **Database:** `orders`, `payments`, `products`, `inventory`
 
 **Story CA-003**: Product Search in POS
 - **As a** cashier
 - **I want to** quickly find products during checkout
 - **So that** I can efficiently process customer purchases
-- **Database Models:** `products`, `inventory`, `categories`
-- **Frontend Pages:** `src/pages/cashier/POS.jsx`
-- **Components:** `src/components/ProductSearch.jsx`, `src/components/ProductCard.jsx`
-- **Services:** `src/services/productService.js`
-- **Hooks:** `src/hooks/useProducts.js`
-- **Acceptance Criteria:**
-  - Search by product name, SKU, or barcode
-  - Auto-complete suggestions
-  - Display product image, name, price, stock
-  - Keyboard shortcuts for quick navigation
-  - Recently sold items quick access
-  - Category-based browsing
-  - Handle barcode scanner input
+- **Implementation Files:**
+  - **Page:** `src/pages/cashier/POS.jsx`
+  - **Components:** 
+    - `src/components/forms/SearchBox.jsx`
+    - `src/components/ProductSearch.jsx`
+    - `src/components/BarcodeScanner.jsx`
+    - `src/components/CategoryBrowser.jsx`
+  - **Services:** `src/services/productService.js`
+  - **Hooks:** `src/hooks/useProducts.js`
+  - **Store:** `src/store/productSlice.js`
+  - **Database:** `products`, `inventory`, `categories`
 
 **Story CA-004**: POS Cart Management
 - **As a** cashier
 - **I want to** manage items in the POS cart
 - **So that** I can accurately process customer orders
-- **Database Models:** `products`, `discounts`, `inventory`
-- **Frontend Pages:** `src/pages/cashier/POS.jsx`
-- **Components:** `src/components/POSCart.jsx`, `src/components/CartItem.jsx`
-- **Services:** `src/services/cartService.js`
-- **Hooks:** `src/hooks/useCart.js`
-- **Acceptance Criteria:**
-  - Add products with quantity adjustment
-  - Apply discounts (percentage/fixed amount)
-  - Remove items or void entire sale
-  - Calculate tax and total in real-time
-  - Handle special pricing for staff/bulk
-  - Split payments between cash/card
-  - Hold/retrieve transactions
+- **Implementation Files:**
+  - **Page:** `src/pages/cashier/POS.jsx`
+  - **Components:** 
+    - `src/components/POSCart.jsx`
+    - `src/components/CartItem.jsx`
+    - `src/components/DiscountSelector.jsx`
+    - `src/components/TaxCalculator.jsx`
+  - **Services:** `src/services/cartService.js`
+  - **Hooks:** `src/hooks/useCart.js`
+  - **Store:** `src/store/cartSlice.js`
+  - **Database:** `products`, `discounts`, `inventory`
 
 **Story CA-005**: Payment Processing
 - **As a** cashier
 - **I want to** process different payment methods
 - **So that** I can complete customer transactions
-- **Database Models:** `payments`, `orders`, `order_items`
-- **Frontend Pages:** `src/pages/cashier/POS.jsx`
-- **Components:** `src/components/PaymentModal.jsx`, `src/components/ReceiptPreview.jsx`
-- **Services:** `src/services/paymentService.js`
-- **Acceptance Criteria:**
-  - Accept cash payments with change calculation
-  - Process card payments via Yoco terminal
-  - Split payments (cash + card)
-  - Generate and print receipts
-  - Email receipts to customers
-  - Handle payment failures gracefully
-  - Void/refund transactions
+- **Implementation Files:**
+  - **Page:** `src/pages/cashier/POS.jsx`
+  - **Components:** 
+    - `src/components/PaymentModal.jsx`
+    - `src/components/CashPayment.jsx`
+    - `src/components/CardPayment.jsx`
+    - `src/components/ReceiptPreview.jsx`
+  - **Services:** `src/services/paymentService.js`, `src/services/orderService.js`
+  - **Hooks:** `src/hooks/useOrders.js`
+  - **Store:** `src/store/orderSlice.js`
+  - **Database:** `payments`, `orders`, `order_items`
 
 ### Sales Reporting
-
-**Epic: Cashier Reporting**
 
 **Story CA-006**: Daily Sales Report
 - **As a** cashier
 - **I want to** view my daily sales performance
 - **So that** I can track my productivity
-- **Database Models:** `orders`, `order_items`, `payments`, `users`
-- **Frontend Pages:** `src/pages/cashier/Reports.jsx`
-- **Components:** `src/components/SalesChart.jsx`, `src/components/ReportTable.jsx`
-- **Services:** `src/services/reportService.js`
-- **Utils:** `src/utils/exportUtils.js`
-- **Acceptance Criteria:**
-  - Sales amount by hour/payment method
-  - Number of transactions processed
-  - Average transaction value
-  - Top selling products
-  - Payment method breakdown
-  - Export to PDF/Excel
-  - Compare with previous days
+- **Implementation Files:**
+  - **Page:** `src/pages/cashier/Reports.jsx`
+  - **Components:** 
+    - `src/components/SalesChart.jsx`
+    - `src/components/ReportTable.jsx`
+    - `src/components/PerformanceMetrics.jsx`
+    - `src/components/ExportButton.jsx`
+  - **Services:** `src/services/reportService.js`
+  - **Hooks:** `src/hooks/useReports.js`
+  - **Utils:** `src/utils/exportUtils.js`
+  - **Database:** `orders`, `order_items`, `payments`, `users`
 
 ---
 
@@ -743,215 +710,181 @@ CREATE INDEX idx_carts_session ON shopping_carts(session_id);
 
 ### Dashboard & Analytics
 
-**Epic: Admin Dashboard**
-
 **Story A-001**: Admin Authentication
 - **As an** administrator
 - **I want to** securely login with enhanced security
 - **So that** I can access sensitive business functions
-- **Database Models:** `users`, `user_profiles`, `audit_logs`
-- **Frontend Pages:** `src/pages/auth/Login.jsx`
-- **Components:** `src/components/forms/LoginForm.jsx`, `src/components/TwoFactorAuth.jsx`
-- **Services:** `src/services/authService.js`
-- **Store:** `src/store/authSlice.js`
-- **Acceptance Criteria:**
-  - Two-factor authentication required
-  - IP address logging and restrictions
-  - Failed login attempt notifications
-  - Session management with timeout
-  - Admin-specific UI theme
-  - Activity logging for compliance
+- **Implementation Files:**
+  - **Page:** `src/pages/auth/Login.jsx` (shared login page)
+  - **Components:** 
+    - `src/components/forms/LoginForm.jsx`
+    - `src/components/TwoFactorAuth.jsx`
+  - **Services:** `src/services/authService.js`
+  - **Store:** `src/store/authSlice.js`
+  - **Routes:** `src/routes/RoleRoute.jsx`
+  - **Database:** `users`, `user_profiles`, `audit_logs`
 
 **Story A-002**: Executive Dashboard
 - **As an** administrator
 - **I want to** see key business metrics at a glance
 - **So that** I can make informed business decisions
-- **Database Models:** `orders`, `products`, `users`, `inventory`, `payments`
-- **Frontend Pages:** `src/pages/admin/Dashboard.jsx`
-- **Components:** `src/components/MetricCard.jsx`, `src/components/SalesChart.jsx`, `src/components/RecentOrders.jsx`
-- **Services:** `src/services/reportService.js`
-- **Hooks:** `src/hooks/useAnalytics.js`
-- **Acceptance Criteria:**
-  - Revenue trends (daily/weekly/monthly)
-  - Order volume and conversion rates
-  - Top performing products
-  - Low stock alerts
-  - Customer acquisition metrics
-  - Real-time order notifications
-  - Customizable dashboard widgets
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/Dashboard.jsx`
+  - **Components:** 
+    - `src/components/MetricCard.jsx`
+    - `src/components/SalesChart.jsx`
+    - `src/components/RecentOrders.jsx`
+    - `src/components/TopProducts.jsx`
+    - `src/components/LowStockAlerts.jsx`
+  - **Services:** `src/services/reportService.js`
+  - **Hooks:** `src/hooks/useReports.js`
+  - **Database:** `orders`, `products`, `users`, `inventory`, `payments`
 
 ### Inventory Management
-
-**Epic: Product & Inventory Control**
 
 **Story A-003**: Product Management
 - **As an** administrator
 - **I want to** manage the product catalog
 - **So that** I can maintain accurate product information
-- **Database Models:** `products`, `categories`, `product_images`, `inventory`
-- **Frontend Pages:** `src/pages/admin/Inventory.jsx`
-- **Components:** `src/components/ProductForm.jsx`, `src/components/ImageUpload.jsx`, `src/components/ProductTable.jsx`
-- **Services:** `src/services/productService.js`, `src/services/inventoryService.js`
-- **Hooks:** `src/hooks/useProducts.js`
-- **Acceptance Criteria:**
-  - Create/edit/delete products
-  - Bulk product import via CSV
-  - Image upload with compression
-  - SEO optimization fields
-  - Product variants management
-  - Category assignment
-  - Price history tracking
-  - Bulk operations (price updates, etc.)
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/Inventory.jsx`
+  - **Components:** 
+    - `src/components/ProductForm.jsx`
+    - `src/components/ProductTable.jsx`
+    - `src/components/ImageUpload.jsx`
+    - `src/components/CategorySelector.jsx`
+    - `src/components/BulkImport.jsx`
+  - **Services:** `src/services/productService.js`, `src/services/inventoryService.js`
+  - **Hooks:** `src/hooks/useProducts.js`, `src/hooks/useInventory.js`
+  - **Store:** `src/store/productSlice.js`, `src/store/inventorySlice.js`
+  - **Utils:** `src/utils/imageUtils.js`
+  - **Database:** `products`, `categories`, `product_images`, `inventory`
 
 **Story A-004**: Inventory Tracking
 - **As an** administrator
 - **I want to** monitor stock levels across all products
 - **So that** I can prevent stockouts and overstock
-- **Database Models:** `inventory`, `inventory_movements`, `products`
-- **Frontend Pages:** `src/pages/admin/Inventory.jsx`
-- **Components:** `src/components/StockTable.jsx`, `src/components/StockAlerts.jsx`
-- **Services:** `src/services/inventoryService.js`
-- **Hooks:** `src/hooks/useInventory.js`
-- **Acceptance Criteria:**
-  - Real-time stock level display
-  - Low stock and out-of-stock alerts
-  - Stock movement history
-  - Automated reorder point calculations
-  - Physical stock count functionality
-  - Supplier management integration
-  - Waste/damage tracking
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/Inventory.jsx`
+  - **Components:** 
+    - `src/components/StockTable.jsx`
+    - `src/components/StockAlerts.jsx`
+    - `src/components/InventoryMovements.jsx`
+    - `src/components/StockCountForm.jsx`
+  - **Services:** `src/services/inventoryService.js`
+  - **Hooks:** `src/hooks/useInventory.js`
+  - **Store:** `src/store/inventorySlice.js`
+  - **Database:** `inventory`, `inventory_movements`, `products`
 
 **Story A-005**: Purchase Orders
 - **As an** administrator
 - **I want to** generate purchase orders for restocking
 - **So that** I can maintain optimal inventory levels
-- **Database Models:** `inventory`, `products`, `suppliers` (new), `purchase_orders` (new)
-- **Frontend Pages:** `src/pages/admin/PurchaseOrders.jsx`
-- **Components:** `src/components/POForm.jsx`, `src/components/SupplierSelect.jsx`
-- **Services:** `src/services/purchaseOrderService.js`
-- **Acceptance Criteria:**
-  - Auto-generate POs based on reorder points
-  - Supplier contact management
-  - PO approval workflow
-  - Track delivery status
-  - Update inventory upon receipt
-  - Cost analysis and reporting
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/PurchaseOrders.jsx` (new page)
+  - **Components:** 
+    - `src/components/POForm.jsx`
+    - `src/components/SupplierSelector.jsx`
+    - `src/components/POTable.jsx`
+    - `src/components/ReorderSuggestions.jsx`
+  - **Services:** `src/services/purchaseOrderService.js` (new service)
+  - **Database:** `inventory`, `products`, `suppliers` (new table), `purchase_orders` (new table)
 
 ### Order Management
-
-**Epic: Order Processing**
 
 **Story A-006**: Order Overview
 - **As an** administrator
 - **I want to** view and manage all customer orders
 - **So that** I can ensure timely order fulfillment
-- **Database Models:** `orders`, `order_items`, `users`, `addresses`, `payments`
-- **Frontend Pages:** `src/pages/admin/Orders.jsx`
-- **Components:** `src/components/OrderTable.jsx`, `src/components/OrderFilters.jsx`, `src/components/OrderDetails.jsx`
-- **Services:** `src/services/orderService.js`
-- **Hooks:** `src/hooks/useOrders.js`
-- **Acceptance Criteria:**
-  - Filterable order list (status, date, customer)
-  - Bulk operations (status updates, exports)
-  - Order details modal with full information
-  - Customer communication tools
-  - Refund/void processing
-  - Shipping integration
-  - Order analytics and trends
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/Orders.jsx`
+  - **Components:** 
+    - `src/components/OrderTable.jsx`
+    - `src/components/OrderFilters.jsx`
+    - `src/components/OrderDetails.jsx`
+    - `src/components/OrderStatusUpdate.jsx`
+    - `src/components/BulkOrderActions.jsx`
+  - **Services:** `src/services/orderService.js`
+  - **Hooks:** `src/hooks/useOrders.js`
+  - **Store:** `src/store/orderSlice.js`
+  - **Database:** `orders`, `order_items`, `users`, `addresses`, `payments`
 
 **Story A-007**: Shipping Management
 - **As an** administrator
 - **I want to** manage order fulfillment and shipping
 - **So that** customers receive their orders promptly
-- **Database Models:** `orders`, `shipments` (new), `addresses`
-- **Frontend Pages:** `src/pages/admin/Orders.jsx`
-- **Components:** `src/components/ShippingForm.jsx`, `src/components/LabelPrint.jsx`
-- **Services:** `src/services/shippingService.js`
-- **Acceptance Criteria:**
-  - Generate shipping labels
-  - Track shipment status
-  - Batch processing for multiple orders
-  - Shipping cost calculation
-  - Delivery confirmation
-  - Customer notification automation
-  - Returns processing
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/Orders.jsx`
+  - **Components:** 
+    - `src/components/ShippingForm.jsx`
+    - `src/components/ShippingLabel.jsx`
+    - `src/components/TrackingNumber.jsx`
+    - `src/components/BatchShipping.jsx`
+  - **Services:** `src/services/shippingService.js` (new service)
+  - **Database:** `orders`, `shipments` (new table), `addresses`
 
 ### User & Customer Management
-
-**Epic: User Administration**
 
 **Story A-008**: Staff Management
 - **As an** administrator
 - **I want to** manage staff user accounts
 - **So that** I can control system access and permissions
-- **Database Models:** `users`, `user_profiles`, `roles` (new), `permissions` (new)
-- **Frontend Pages:** `src/pages/admin/Users.jsx`
-- **Components:** `src/components/UserForm.jsx`, `src/components/RoleSelector.jsx`
-- **Services:** `src/services/userService.js`
-- **Acceptance Criteria:**
-  - Create/edit staff accounts
-  - Role-based permission assignment
-  - Account activation/deactivation
-  - Password reset functionality
-  - Activity monitoring
-  - Login history tracking
-  - Bulk user operations
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/Users.jsx`
+  - **Components:** 
+    - `src/components/UserForm.jsx`
+    - `src/components/UserTable.jsx`
+    - `src/components/RoleSelector.jsx`
+    - `src/components/PermissionMatrix.jsx`
+    - `src/components/UserActivity.jsx`
+  - **Services:** `src/services/userService.js` (new service)
+  - **Database:** `users`, `user_profiles`, `roles` (new table), `permissions` (new table)
 
 **Story A-009**: Customer Management
 - **As an** administrator
 - **I want to** manage customer accounts and relationships
 - **So that** I can provide better customer service
-- **Database Models:** `users`, `orders`, `reviews`, `addresses`
-- **Frontend Pages:** `src/pages/admin/Customers.jsx`
-- **Components:** `src/components/CustomerProfile.jsx`, `src/components/CustomerOrders.jsx`
-- **Services:** `src/services/customerService.js`
-- **Acceptance Criteria:**
-  - Customer profile management
-  - Order history and lifetime value
-  - Communication history
-  - Segmentation for marketing
-  - Account merge/delete functionality
-  - Export customer data
-  - GDPR compliance tools
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/Customers.jsx`
+  - **Components:** 
+    - `src/components/CustomerProfile.jsx`
+    - `src/components/CustomerOrders.jsx`
+    - `src/components/CustomerSegments.jsx`
+    - `src/components/CustomerCommunication.jsx`
+  - **Services:** `src/services/customerService.js` (new service)
+  - **Database:** `users`, `orders`, `reviews`, `addresses`
 
 ### Advanced Reporting
-
-**Epic: Business Intelligence**
 
 **Story A-010**: Sales Analytics
 - **As an** administrator
 - **I want to** analyze sales performance across multiple dimensions
 - **So that** I can identify trends and opportunities
-- **Database Models:** `orders`, `order_items`, `products`, `categories`, `users`
-- **Frontend Pages:** `src/pages/admin/Reports.jsx`
-- **Components:** `src/components/AnalyticsCharts.jsx`, `src/components/ReportBuilder.jsx`
-- **Services:** `src/services/analyticsService.js`
-- **Utils:** `src/utils/chartUtils.js`
-- **Acceptance Criteria:**
-  - Sales trends by time period
-  - Product performance analysis
-  - Customer behavior insights
-  - Geographic sales distribution
-  - Payment method analysis
-  - Custom report builder
-  - Automated report scheduling
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/Reports.jsx`
+  - **Components:** 
+    - `src/components/AnalyticsCharts.jsx`
+    - `src/components/ReportBuilder.jsx`
+    - `src/components/SalesTrends.jsx`
+    - `src/components/CustomerAnalytics.jsx`
+  - **Services:** `src/services/reportService.js`
+  - **Hooks:** `src/hooks/useReports.js`
+  - **Utils:** `src/utils/exportUtils.js`
+  - **Database:** `orders`, `order_items`, `products`, `categories`, `users`
 
 **Story A-011**: Inventory Reports
 - **As an** administrator
 - **I want to** generate comprehensive inventory reports
 - **So that** I can optimize stock management
-- **Database Models:** `inventory`, `inventory_movements`, `products`, `orders`
-- **Frontend Pages:** `src/pages/admin/Reports.jsx`
-- **Components:** `src/components/InventoryCharts.jsx`, `src/components/StockAnalysis.jsx`
-- **Services:** `src/services/inventoryService.js`
-- **Acceptance Criteria:**
-  - Stock turnover analysis
-  - Slow-moving inventory reports
-  - Cost of goods sold tracking
-  - Supplier performance metrics
-  - Waste and shrinkage reports
-  - Forecasting and demand planning
-  - ABC analysis for inventory classification
+- **Implementation Files:**
+  - **Page:** `src/pages/admin/Reports.jsx`
+  - **Components:** 
+    - `src/components/InventoryCharts.jsx`
+    - `src/components/StockAnalysis.jsx`
+    - `src/components/TurnoverReport.jsx`
+    - `src/components/ABCAnalysis.jsx`
+  - **Services:** `src/services/inventoryService.js`, `src/services/reportService.js`
+  - **Database:** `inventory`, `inventory_movements`, `products`, `orders`
 
 ---
 
@@ -959,116 +892,80 @@ CREATE INDEX idx_carts_session ON shopping_carts(session_id);
 
 ### System-Wide Features
 
-**Epic: Universal Functionality**
-
 **Story CR-001**: Real-time Inventory Sync
 - **As a** user of any role
 - **I want** inventory updates to be reflected immediately across all interfaces
 - **So that** stock information is always accurate
-- **Database Models:** `inventory`, `products`, `orders`
-- **Services:** `src/services/realtimeService.js`
-- **Hooks:** `src/hooks/useRealtime.js`
-- **Acceptance Criteria:**
-  - WebSocket connection for real-time updates
-  - Inventory changes broadcast to all connected clients
-  - Graceful handling of connection failures
-  - Automatic reconnection logic
-  - Visual indicators for real-time updates
+- **Implementation Files:**
+  - **Services:** `src/services/realtimeService.js` (new service)
+  - **Hooks:** `src/hooks/useRealtime.js` (new hook)
+  - **Store:** `src/store/inventorySlice.js`
+  - **Components:** Real-time updates in all inventory-related components
+  - **Database:** `inventory`, `products`, `orders`
 
-**Story CR-002**: Search Functionality
+**Story CR-002**: Universal Search Functionality
 - **As a** user of any role
 - **I want** to search for relevant information efficiently
 - **So that** I can find what I need quickly
-- **Database Models:** `products`, `orders`, `users`
-- **Components:** `src/components/UniversalSearch.jsx`
-- **Services:** `src/services/searchService.js`
-- **Hooks:** `src/hooks/useSearch.js`
-- **Acceptance Criteria:**
-  - Role-appropriate search results
-  - Auto-complete suggestions
-  - Search history for logged-in users
-  - Advanced filters based on user role
-  - Keyboard shortcuts for power users
+- **Implementation Files:**
+  - **Components:** 
+    - `src/components/forms/SearchBox.jsx`
+    - `src/components/UniversalSearch.jsx`
+    - `src/components/SearchResults.jsx`
+  - **Services:** `src/services/searchService.js` (new service)
+  - **Hooks:** `src/hooks/useSearch.js` (new hook)
+  - **Database:** `products`, `orders`, `users`
 
 **Story CR-003**: Notification System
 - **As a** user of any role
 - **I want** to receive relevant notifications
 - **So that** I stay informed about important events
-- **Database Models:** `notifications` (new), `users`
-- **Components:** `src/components/NotificationCenter.jsx`, `src/components/Toast.jsx`
-- **Services:** `src/services/notificationService.js`
-- **Hooks:** `src/hooks/useNotifications.js`
-- **Store:** `src/store/notificationSlice.js`
-- **Acceptance Criteria:**
-  - Real-time notifications via WebSocket
-  - Role-based notification types
-  - Email/SMS notification options
-  - Notification preferences management
-  - Mark as read/unread functionality
-  - Notification history
+- **Implementation Files:**
+  - **Components:** 
+    - `src/components/NotificationCenter.jsx`
+    - `src/components/feedback/ToastNotification.jsx`
+    - `src/components/NotificationBell.jsx`
+  - **Services:** `src/services/notificationService.js` (new service)
+  - **Hooks:** `src/hooks/useNotifications.js` (new hook)
+  - **Store:** `src/store/notificationSlice.js` (new slice)
+  - **Database:** `notifications` (new table), `users`
 
 **Story CR-004**: Audit Trail
 - **As a** system administrator
 - **I want** all user actions to be logged
 - **So that** I can maintain security and compliance
-- **Database Models:** `audit_logs`, `users`
-- **Services:** `src/services/auditService.js`
-- **Utils:** `src/utils/auditUtils.js`
-- **Acceptance Criteria:**
-  - Log all CRUD operations
-  - Track user sessions and authentication
-  - Record IP addresses and user agents
-  - Searchable audit logs
-  - Export audit reports
-  - Automated compliance reporting
+- **Implementation Files:**
+  - **Services:** `src/services/auditService.js` (new service)
+  - **Utils:** `src/utils/auditUtils.js` (new utility)
+  - **Pages:** `src/pages/admin/AuditLogs.jsx` (new page)
+  - **Components:** 
+    - `src/components/AuditTable.jsx`
+    - `src/components/AuditFilters.jsx`
+  - **Database:** `audit_logs`, `users`
 
 ---
 
-## 📋 Implementation Guidelines
+## 📋 Implementation Priority
 
-### Database Considerations
+### Phase 1 (MVP - Customer & Basic Admin)
+1. **Authentication System** (C-001, C-002, C-003)
+2. **Product Catalog** (C-005, C-006, C-007, C-008)
+3. **Shopping Cart** (C-009, C-010)
+4. **Basic Checkout** (C-011)
+5. **Order History** (C-012)
+6. **Admin Dashboard** (A-001, A-002)
+7. **Basic Product Management** (A-003)
 
-1. **Performance Optimization:**
-   - Implement proper indexing for frequently queried columns
-   - Use materialized views for complex reporting queries
-   - Consider partitioning for large tables (orders, audit_logs)
-   - Implement database connection pooling
+### Phase 2 (Cashier & Advanced Admin)
+1. **POS System** (CA-001, CA-002, CA-003, CA-004, CA-005)
+2. **Inventory Management** (A-004, A-005)
+3. **Order Management** (A-006, A-007)
+4. **Basic Reporting** (CA-006, A-010)
 
-2. **Data Integrity:**
-   - Enforce foreign key constraints
-   - Use database triggers for audit logging
-   - Implement soft deletes for critical data
-   - Regular backup and recovery procedures
+### Phase 3 (Advanced Features)
+1. **User Management** (A-008, A-009)
+2. **Advanced Analytics** (A-011)
+3. **Real-time Features** (CR-001, CR-003)
+4. **Audit & Compliance** (CR-004)
 
-3. **Security:**
-   - Row-level security for multi-tenant data
-   - Encrypted storage for sensitive data
-   - Database user permissions aligned with application roles
-   - SQL injection prevention through parameterized queries
-
-### Frontend Architecture
-
-1. **State Management:**
-   - Redux Toolkit for global state
-   - React Query for server state
-   - Local state for component-specific data
-
-2. **Code Organization:**
-   - Feature-based folder structure
-   - Shared components library
-   - Custom hooks for business logic
-   - Service layer for API calls
-
-3. **Performance:**
-   - Code splitting by route and role
-   - Image optimization and lazy loading
-   - Memoization for expensive computations
-   - Virtual scrolling for large lists
-
-4. **Testing Strategy:**
-   - Unit tests for utilities and hooks
-   - Integration tests for API services
-   - E2E tests for critical user flows
-   - Visual regression testing for UI components
-
-This comprehensive documentation provides a solid foundation for implementing the Best Brightness e-commerce platform with clear traceability between user stories, database models, and frontend implementation files.
+This comprehensive mapping provides clear guidance for implementation, ensuring each user story has defined components, pages, and database models for successful development.

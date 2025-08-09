@@ -200,9 +200,20 @@ const HomePage = () => {
                   </span>
                 )}
               </button>
-              <button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-4 md:px-6 py-2 rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-lg text-sm md:text-base">
-                Sign In
-              </button>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="px-4 py-2 text-cyan-600 hover:text-cyan-700 transition-colors text-sm md:text-base font-medium"
+                >
+                  Sign In
+                </button>
+                <button 
+                  onClick={() => navigate('/register')}
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-4 md:px-6 py-2 rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-lg text-sm md:text-base"
+                >
+                  Register
+                </button>
+              </div>
             </div>
           </div>
 
