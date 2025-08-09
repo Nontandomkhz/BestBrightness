@@ -220,6 +220,25 @@
 
 ```
 Project File Structure
+
+ecommerce-system/
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml
+│   │   ├── deploy.yml
+│   │   └── tests.yml
+│   └── ISSUE_TEMPLATE/
+│       ├── bug_report.md
+│       ├── feature_request.md
+│       └── user_story.md
+├── public/
+│   ├── favicon.ico
+│   ├── logo.svg
+│   ├── images/
+│   │   ├── products/
+│   │   ├── promotions/
+│   │   └── placeholders/
+│   └── icons/
 src/
 ├── components/
 │   ├── layout/
@@ -334,7 +353,58 @@ src/
 │
 ├── App.jsx
 └── main.jsx
-
+└── vite-env.d.js
+├── supabase/
+│   ├── migrations/
+│   │   ├── 001_initial_schema.sql
+│   │   ├── 002_products_table.sql
+│   │   ├── 003_orders_table.sql
+│   │   ├── 004_customers_table.sql
+│   │   ├── 005_inventory_table.sql
+│   │   ├── 006_users_table.sql
+│   │   └── 007_reports_views.sql
+│   ├── functions/
+│   │   ├── auth-hooks/
+│   │   ├── payment-webhook/
+│   │   └── email-notifications/
+│   ├── seed/
+│   │   ├── products.sql
+│   │   ├── categories.sql
+│   │   └── sample_data.sql
+│   └── config.toml
+├── docs/
+│   ├── setup.md
+│   ├── deployment.md
+│   ├── api-documentation.md
+│   ├── user-guides/
+│   │   ├── customer-guide.md
+│   │   ├── cashier-guide.md
+│   │   └── admin-guide.md
+│   └── development/
+│       ├── coding-standards.md
+│       ├── component-guidelines.md
+│       └── testing-strategy.md
+├── tests/
+│   ├── __mocks__/
+│   ├── components/
+│   ├── pages/
+│   ├── hooks/
+│   ├── services/
+│   ├── utils/
+│   ├── setup.js
+│   └── test-utils.jsx
+├── .env.example
+├── .env.local
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── vite.config.js
+├── tailwind.config.js
+├── jsconfig.json
+├── eslint.config.js
+├── prettier.config.js
+├── vitest.config.js
+└── README.md
 
 ```
 
