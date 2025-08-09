@@ -220,310 +220,121 @@
 
 ```
 Project File Structure
-ecommerce-system/
-├── .github/
-│   ├── workflows/
-│   │   ├── ci.yml
-│   │   ├── deploy.yml
-│   │   └── tests.yml
-│   └── ISSUE_TEMPLATE/
-│       ├── bug_report.md
-│       ├── feature_request.md
-│       └── user_story.md
-├── public/
-│   ├── favicon.ico
-│   ├── logo.svg
-│   ├── images/
-│   │   ├── products/
-│   │   ├── promotions/
-│   │   └── placeholders/
-│   └── icons/
-├── src/
-│   ├── components/
-│   │   ├── common/
-│   │   │   ├── Layout/
-│   │   │   │   ├── Layout.jsx
-│   │   │   │   ├── Header.jsx
-│   │   │   │   ├── Footer.jsx
-│   │   │   │   ├── Navigation.jsx
-│   │   │   │   └── Sidebar.jsx
-│   │   │   ├── UI/
-│   │   │   │   ├── Button.jsx
-│   │   │   │   ├── Input.jsx
-│   │   │   │   ├── Modal.jsx
-│   │   │   │   ├── Card.jsx
-│   │   │   │   ├── Badge.jsx
-│   │   │   │   ├── Spinner.jsx
-│   │   │   │   ├── Alert.jsx
-│   │   │   │   ├── Pagination.jsx
-│   │   │   │   ├── SearchBox.jsx
-│   │   │   │   ├── FilterDropdown.jsx
-│   │   │   │   └── LoadingOverlay.jsx
-│   │   │   ├── Forms/
-│   │   │   │   ├── FormField.jsx
-│   │   │   │   ├── FormSelect.jsx
-│   │   │   │   ├── FormCheckbox.jsx
-│   │   │   │   ├── FormTextarea.jsx
-│   │   │   │   └── ValidationMessage.jsx
-│   │   │   └── Tables/
-│   │   │       ├── DataTable.jsx
-│   │   │       ├── TableRow.jsx
-│   │   │       ├── TableHeader.jsx
-│   │   │       └── TablePagination.jsx
-│   │   ├── customer/
-│   │   │   ├── ProductCard.jsx
-│   │   │   ├── ProductGrid.jsx
-│   │   │   ├── ProductDetails.jsx
-│   │   │   ├── ProductSearch.jsx
-│   │   │   ├── ShoppingCart/
-│   │   │   │   ├── CartItem.jsx
-│   │   │   │   ├── CartSummary.jsx
-│   │   │   │   ├── CartDrawer.jsx
-│   │   │   │   └── MiniCart.jsx
-│   │   │   ├── Checkout/
-│   │   │   │   ├── CheckoutForm.jsx
-│   │   │   │   ├── PaymentForm.jsx
-│   │   │   │   ├── ShippingForm.jsx
-│   │   │   │   ├── OrderSummary.jsx
-│   │   │   │   └── StepIndicator.jsx
-│   │   │   ├── Account/
-│   │   │   │   ├── ProfileForm.jsx
-│   │   │   │   ├── OrderHistory.jsx
-│   │   │   │   ├── OrderDetails.jsx
-│   │   │   │   └── AddressBook.jsx
-│   │   │   ├── Auth/
-│   │   │   │   ├── LoginForm.jsx
-│   │   │   │   ├── RegisterForm.jsx
-│   │   │   │   ├── ForgotPasswordForm.jsx
-│   │   │   │   └── ResetPasswordForm.jsx
-│   │   │   ├── Homepage/
-│   │   │   │   ├── HeroSection.jsx
-│   │   │   │   ├── FeaturedProducts.jsx
-│   │   │   │   ├── PromotionBanner.jsx
-│   │   │   │   ├── CategoryShowcase.jsx
-│   │   │   │   └── NewsletterSignup.jsx
-│   │   │   └── Reviews/
-│   │   │       ├── ReviewForm.jsx
-│   │   │       ├── ReviewsList.jsx
-│   │   │       └── StarRating.jsx
-│   │   ├── cashier/
-│   │   │   ├── POS/
-│   │   │   │   ├── POSInterface.jsx
-│   │   │   │   ├── ProductScanner.jsx
-│   │   │   │   ├── POSCart.jsx
-│   │   │   │   ├── PaymentTerminal.jsx
-│   │   │   │   ├── ReceiptPrinter.jsx
-│   │   │   │   └── CashDrawer.jsx
-│   │   │   ├── Dashboard/
-│   │   │   │   ├── CashierDashboard.jsx
-│   │   │   │   ├── SalesMetrics.jsx
-│   │   │   │   └── RecentTransactions.jsx
-│   │   │   ├── Reports/
-│   │   │   │   ├── DailySalesReport.jsx
-│   │   │   │   ├── WeeklySalesReport.jsx
-│   │   │   │   └── MonthlySalesReport.jsx
-│   │   │   └── Auth/
-│   │   │       └── CashierLogin.jsx
-│   │   └── admin/
-│   │       ├── Dashboard/
-│   │       │   ├── AdminDashboard.jsx
-│   │       │   ├── MetricsCards.jsx
-│   │       │   ├── SalesChart.jsx
-│   │       │   ├── InventoryAlerts.jsx
-│   │       │   └── RecentOrders.jsx
-│   │       ├── Inventory/
-│   │       │   ├── ProductManagement.jsx
-│   │       │   ├── ProductForm.jsx
-│   │       │   ├── StockManager.jsx
-│   │       │   ├── LowStockAlerts.jsx
-│   │       │   ├── InventoryReports.jsx
-│   │       │   └── PurchaseOrders.jsx
-│   │       ├── Orders/
-│   │       │   ├── OrderManagement.jsx
-│   │       │   ├── OrderDetails.jsx
-│   │       │   ├── OrderStatusUpdater.jsx
-│   │       │   ├── ShippingLabels.jsx
-│   │       │   └── PackingSlips.jsx
-│   │       ├── Customers/
-│   │       │   ├── CustomerManagement.jsx
-│   │       │   ├── CustomerDetails.jsx
-│   │       │   ├── CustomerHistory.jsx
-│   │       │   └── EmailCampaigns.jsx
-│   │       ├── Users/
-│   │       │   ├── UserManagement.jsx
-│   │       │   ├── UserForm.jsx
-│   │       │   ├── RoleAssignment.jsx
-│   │       │   └── PermissionMatrix.jsx
-│   │       ├── Reports/
-│   │       │   ├── SalesReports.jsx
-│   │       │   ├── InventoryReports.jsx
-│   │       │   ├── CustomerReports.jsx
-│   │       │   ├── ReportFilters.jsx
-│   │       │   └── ExportManager.jsx
-│   │       └── Auth/
-│   │           ├── AdminLogin.jsx
-│   │           └── TwoFactorAuth.jsx
-│   ├── pages/
-│   │   ├── customer/
-│   │   │   ├── HomePage.jsx
-│   │   │   ├── ProductsPage.jsx
-│   │   │   ├── ProductDetailsPage.jsx
-│   │   │   ├── CartPage.jsx
-│   │   │   ├── CheckoutPage.jsx
-│   │   │   ├── AccountPage.jsx
-│   │   │   ├── OrderHistoryPage.jsx
-│   │   │   ├── LoginPage.jsx
-│   │   │   ├── RegisterPage.jsx
-│   │   │   └── ForgotPasswordPage.jsx
-│   │   ├── cashier/
-│   │   │   ├── CashierDashboard.jsx
-│   │   │   ├── POSPage.jsx
-│   │   │   ├── ReportsPage.jsx
-│   │   │   └── CashierLoginPage.jsx
-│   │   ├── admin/
-│   │   │   ├── AdminDashboard.jsx
-│   │   │   ├── InventoryPage.jsx
-│   │   │   ├── OrdersPage.jsx
-│   │   │   ├── CustomersPage.jsx
-│   │   │   ├── UsersPage.jsx
-│   │   │   ├── ReportsPage.jsx
-│   │   │   └── AdminLoginPage.jsx
-│   │   └── common/
-│   │       ├── NotFoundPage.jsx
-│   │       ├── UnauthorizedPage.jsx
-│   │       └── ErrorPage.jsx
-│   ├── hooks/
-│   │   ├── useAuth.js
-│   │   ├── useCart.js
-│   │   ├── useProducts.js
-│   │   ├── useOrders.js
-│   │   ├── useInventory.js
-│   │   ├── useCustomers.js
-│   │   ├── usePayment.js
-│   │   ├── useReports.js
-│   │   ├── useSearch.js
-│   │   ├── usePagination.js
-│   │   ├── useLocalStorage.js
-│   │   ├── useDebounce.js
-│   │   └── usePermissions.js
-│   ├── services/
-│   │   ├── api/
-│   │   │   ├── client.js
-│   │   │   ├── auth.js
-│   │   │   ├── products.js
-│   │   │   ├── orders.js
-│   │   │   ├── customers.js
-│   │   │   ├── inventory.js
-│   │   │   ├── users.js
-│   │   │   └── reports.js
-│   │   ├── payments/
-│   │   │   ├── yoco.js
-│   │   │   ├── paystack.js
-│   │   │   └── paymentGateway.js
-│   │   ├── supabase/
-│   │   │   ├── client.js
-│   │   │   ├── auth.js
-│   │   │   ├── database.js
-│   │   │   ├── storage.js
-│   │   │   └── realtime.js
-│   │   ├── email/
-│   │   │   ├── templates.js
-│   │   │   └── sender.js
-│   │   └── utils/
-│   │       ├── encryption.js
-│   │       ├── validation.js
-│   │       ├── formatters.js
-│   │       └── constants.js
-│   ├── store/
-│   │   ├── index.js
-│   │   ├── slices/
-│   │   │   ├── authSlice.js
-│   │   │   ├── cartSlice.js
-│   │   │   ├── productsSlice.js
-│   │   │   ├── ordersSlice.js
-│   │   │   ├── inventorySlice.js
-│   │   │   ├── customersSlice.js
-│   │   │   └── uiSlice.js
-│   │   └── middleware/
-│   │       ├── authMiddleware.js
-│   │       └── persistMiddleware.js
-│   ├── types/
-│   │   ├── auth.types.js
-│   │   ├── product.types.js
-│   │   ├── order.types.js
-│   │   ├── customer.types.js
-│   │   ├── inventory.types.js
-│   │   ├── user.types.js
-│   │   ├── payment.types.js
-│   │   ├── report.types.js
-│   │   └── api.types.js
-│   ├── utils/
-│   │   ├── constants.js
-│   │   ├── helpers.js
-│   │   ├── validators.js
-│   │   ├── formatters.js
-│   │   ├── dateUtils.js
-│   │   ├── priceUtils.js
-│   │   ├── imageUtils.js
-│   │   └── exportUtils.js
-│   ├── styles/
-│   │   ├── globals.css
-│   │   ├── components.css
-│   │   └── utilities.css
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── vite-env.d.js
-├── supabase/
-│   ├── migrations/
-│   │   ├── 001_initial_schema.sql
-│   │   ├── 002_products_table.sql
-│   │   ├── 003_orders_table.sql
-│   │   ├── 004_customers_table.sql
-│   │   ├── 005_inventory_table.sql
-│   │   ├── 006_users_table.sql
-│   │   └── 007_reports_views.sql
-│   ├── functions/
-│   │   ├── auth-hooks/
-│   │   ├── payment-webhook/
-│   │   └── email-notifications/
-│   ├── seed/
-│   │   ├── products.sql
-│   │   ├── categories.sql
-│   │   └── sample_data.sql
-│   └── config.toml
-├── docs/
-│   ├── setup.md
-│   ├── deployment.md
-│   ├── api-documentation.md
-│   ├── user-guides/
-│   │   ├── customer-guide.md
-│   │   ├── cashier-guide.md
-│   │   └── admin-guide.md
-│   └── development/
-│       ├── coding-standards.md
-│       ├── component-guidelines.md
-│       └── testing-strategy.md
-├── tests/
-│   ├── __mocks__/
-│   ├── components/
-│   ├── pages/
-│   ├── hooks/
-│   ├── services/
-│   ├── utils/
-│   ├── setup.js
-│   └── test-utils.jsx
-├── .env.example
-├── .env.local
-├── .gitignore
-├── package.json
-├── package-lock.json
-├── vite.config.js
-├── tailwind.config.js
-├── jsconfig.json
-├── eslint.config.js
-├── prettier.config.js
-├── vitest.config.js
-└── README.md
+src/
+├── components/
+│   ├── layout/
+│   │   ├── Layout.jsx
+│   │   ├── Header.jsx
+│   │   ├── Footer.jsx
+│   │   ├── Sidebar.jsx
+│   │   └── Navigation.jsx
+│   ├── ui/
+│   │   ├── Button.jsx
+│   │   ├── Input.jsx
+│   │   ├── Select.jsx
+│   │   ├── TextArea.jsx
+│   │   ├── Modal.jsx
+│   │   ├── Spinner.jsx
+│   │   ├── Alert.jsx
+│   │   ├── Badge.jsx
+│   │   ├── Card.jsx
+│   │   ├── Tabs.jsx
+│   │   └── Pagination.jsx
+│   ├── forms/
+│   │   ├── LoginForm.jsx       # Single login form for all roles
+│   │   ├── RegisterForm.jsx
+│   │   ├── CheckoutForm.jsx
+│   │   ├── SearchBox.jsx
+│   │   ├── FilterDropdown.jsx
+│   │   └── ValidationMessage.jsx
+│   └── feedback/
+│       ├── ToastNotification.jsx
+│       ├── ConfirmationDialog.jsx
+│       └── EmptyState.jsx
+│
+├── pages/
+│   ├── auth/
+│   │   ├── Login.jsx            # Universal login page
+│   │   └── Register.jsx         # Optional registration page
+│   │
+│   ├── customer/
+│   │   ├── Home.jsx
+│   │   ├── Products.jsx
+│   │   ├── ProductDetails.jsx
+│   │   ├── Cart.jsx
+│   │   ├── Checkout.jsx
+│   │   ├── Orders.jsx
+│   │   └── Account.jsx
+│   │
+│   ├── cashier/
+│   │   ├── Dashboard.jsx
+│   │   ├── POS.jsx
+│   │   ├── Payments.jsx
+│   │   └── Reports.jsx
+│   │
+│   ├── admin/
+│   │   ├── Dashboard.jsx
+│   │   ├── Inventory.jsx
+│   │   ├── Orders.jsx
+│   │   ├── Customers.jsx
+│   │   ├── Users.jsx
+│   │   └── Reports.jsx
+│   │
+│   └── common/
+│       ├── NotFound.jsx
+│       ├── Unauthorized.jsx
+│       └── ErrorPage.jsx
+│
+├── routes/
+│   ├── AppRoute.jsx              # Handles routing
+│   ├── PrivateRoute.jsx          # Protects authenticated routes
+│   └── RoleRoute.jsx             # Handles role-based redirection
+│
+├── hooks/
+│   ├── useAuth.js
+│   ├── useCart.js
+│   ├── useProducts.js
+│   ├── useOrders.js
+│   ├── useInventory.js
+│   ├── useReports.js
+│   ├── usePagination.js
+│   └── useDebounce.js
+│
+├── services/
+│   ├── api.js
+│   ├── authService.js
+│   ├── productService.js
+│   ├── orderService.js
+│   ├── inventoryService.js
+│   ├── reportService.js
+│   └── paymentService.js
+│
+├── store/
+│   ├── index.js
+│   ├── authSlice.js              # Stores user & role info
+│   ├── cartSlice.js
+│   ├── productSlice.js
+│   ├── orderSlice.js
+│   ├── inventorySlice.js
+│   └── uiSlice.js
+│
+├── utils/
+│   ├── constants.js
+│   ├── formatters.js
+│   ├── validators.js
+│   ├── helpers.js
+│   ├── dateUtils.js
+│   ├── priceUtils.js
+│   ├── imageUtils.js
+│   └── exportUtils.js
+│
+├── styles/
+│   ├── globals.css
+│   └── components.css
+│
+├── App.jsx
+└── main.jsx
+
 
 ```
 
