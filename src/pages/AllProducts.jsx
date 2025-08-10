@@ -36,6 +36,7 @@ const AllProductsPage = () => {
   const [minRating, setMinRating] = useState(0);
   const [favorites, setFavorites] = useState(new Set());
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);  // Add this state
 
   // Advanced filtering and sorting
   const filteredProducts = useMemo(() => {
@@ -281,25 +282,47 @@ const AllProductsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-teal-50">
-      {/* Header */}
+      {/* Header - Modified for better mobile view */}
       <header className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-cyan-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl">
-                <Sparkles className="w-5 h-5 text-white" />
+          <div className="flex flex-col sm:flex-row gap-4 py-4 sm:py-0">
+            <div className="flex items-center justify-between sm:justify-start flex-1">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
+                  All Products
+                </h1>
               </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
-                All Products
-              </h1>
+              
+              <div className="flex items-center gap-2 sm:hidden">
+                <button 
+                  onClick={() => setMobileFiltersOpen(true)}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                >
+                  <Filter className="w-6 h-6" />
+                </button>
+                <button 
+                  onClick={() => navigate('/cart')}
+                  className="relative p-2 text-gray-600 hover:text-gray-800"
+                >
+                  <ShoppingCart className="w-6 h-6" />
+                  {cartItems.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-400 to-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                      {cartItems.length}
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="relative flex-1 max-w-md">
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
-                  placeholder="Search products, brands, features..."
+                  placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-2 border border-cyan-200 rounded-xl focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none transition-all duration-200 bg-white/90"
@@ -307,7 +330,7 @@ const AllProductsPage = () => {
               </div>
               <button 
                 onClick={() => navigate('/cart')}
-                className="relative p-2 text-gray-600 hover:text-gray-800"
+                className="relative hidden sm:block p-2 text-gray-600 hover:text-gray-800"
               >
                 <ShoppingCart className="w-6 h-6" />
                 {cartItems.length > 0 && (
@@ -321,35 +344,251 @@ const AllProductsPage = () => {
         </div>
       </header>
 
-      {/* Promotional Banner */}
-      <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center gap-6 text-sm font-medium">
-            <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4" />
-              <span>Free shipping over R500</span>
+      {/* Mobile Filters Slide-over */}
+      {mobileFiltersOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setMobileFiltersOpen(false)} />
+          <div className="fixed inset-y-0 left-0 w-full sm:w-[360px] bg-white shadow-xl flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-lg font-semibold">Filters & Sort</h2>
+              <button onClick={() => setMobileFiltersOpen(false)} className="p-2">
+                <X className="w-6 h-6" />
+              </button>
             </div>
-            <div className="flex items-center gap-2">
-              <Percent className="w-4 h-4" />
-              <span>Up to 30% off selected items</span>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+              {/* Active Filters */}
+              {(selectedCategory !== 'All Categories' || selectedBrand !== 'All Brands' || selectedPriceRange.label !== 'All Prices' || inStockOnly || promotedOnly || minRating > 0) && (
+                <div className="bg-cyan-50 rounded-2xl p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold text-gray-900">Active Filters</h3>
+                    <button
+                      onClick={clearAllFilters}
+                      className="text-sm text-cyan-600 hover:text-cyan-800 font-medium"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCategory !== 'All Categories' && (
+                      <span className="inline-flex items-center gap-2 bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm">
+                        {selectedCategory}
+                        <button onClick={() => setSelectedCategory('All Categories')}>
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    )}
+                    {selectedBrand !== 'All Brands' && (
+                      <span className="inline-flex items-center gap-2 bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm">
+                        {selectedBrand}
+                        <button onClick={() => setSelectedBrand('All Brands')}>
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    )}
+                    {inStockOnly && (
+                      <span className="inline-flex items-center gap-2 bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm">
+                        In Stock Only
+                        <button onClick={() => setInStockOnly(false)}>
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Sort Options */}
+              <div className="bg-white rounded-2xl p-4 border border-cyan-100">
+                <h3 className="font-semibold text-gray-900 mb-4">Sort By</h3>
+           <div className="space-y-2">
+  {[
+    {
+      value: 'featured',
+      label: 'Featured'
+    },
+    {
+      value: 'newest',
+      label: 'Newest Arrivals'
+    },
+    {
+      value: 'popular',
+      label: 'Most Popular'
+    },
+    {
+      value: 'price-low',
+      label: 'Price: Low to High'
+    },
+    {
+      value: 'price-high',
+      label: 'Price: High to Low'
+    },
+    {
+      value: 'rating',
+      label: 'Highest Rated'
+    },
+    {
+      value: 'discount',
+      label: 'Best Deals'
+    }
+  ].map(option => (
+    <button
+      key={option.value}
+      onClick={() => setSortBy(option.value)}
+      className={`w-full text-left px-3 py-2 rounded-lg text-sm ${
+        sortBy === option.value
+          ? 'bg-cyan-500 text-white'
+          : 'text-gray-700 hover:bg-gray-100'
+      }`}
+    >
+      {option.label}
+    </button>
+  ))}
+</div>
+              </div>
+
+              {/* Categories Filter */}
+              <div className="bg-white rounded-2xl p-4 border border-cyan-100">
+                <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
+                <div className="space-y-2">
+                  {categories.map(category => {
+                    const IconComponent = category.icon;
+                    return (
+                      <button
+                        key={category.name}
+                        onClick={() => setSelectedCategory(category.name)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm ${
+                          selectedCategory === category.name
+                            ? 'bg-cyan-500 text-white'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <IconComponent className="w-4 h-4" />
+                          <span>{category.name}</span>
+                        </div>
+                        <span className="text-xs opacity-75">({category.count})</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Brand Filter */}
+              <div className="bg-white rounded-2xl p-4 border border-cyan-100">
+                <h3 className="font-semibold text-gray-900 mb-4">Brands</h3>
+                <div className="space-y-2">
+                  {brands.map(brand => (
+                    <button
+                      key={brand}
+                      onClick={() => setSelectedBrand(brand)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm ${
+                        selectedBrand === brand
+                          ? 'bg-cyan-500 text-white'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      {brand}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range Filter */}
+              <div className="bg-white rounded-2xl p-4 border border-cyan-100">
+                <h3 className="font-semibold text-gray-900 mb-4">Price Range</h3>
+                <div className="space-y-2">
+                  {priceRanges.map(range => (
+                    <button
+                      key={range.label}
+                      onClick={() => setSelectedPriceRange(range)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm ${
+                        selectedPriceRange.label === range.label
+                          ? 'bg-cyan-500 text-white'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      {range.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Additional Filters */}
+              <div className="bg-white rounded-2xl p-4 border border-cyan-100">
+                <h3 className="font-semibold text-gray-900 mb-4">Additional Filters</h3>
+                <div className="space-y-4">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={inStockOnly}
+                      onChange={(e) => setInStockOnly(e.target.checked)}
+                      className="w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500"
+                    />
+                    <span className="text-sm text-gray-700">In Stock Only</span>
+                  </label>
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={promotedOnly}
+                      onChange={(e) => setPromotedOnly(e.target.checked)}
+                      className="w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500"
+                    />
+                    <span className="text-sm text-gray-700">Featured Products</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Rating Filter */}
+              <div className="bg-white rounded-2xl p-4 border border-cyan-100">
+                <h3 className="font-semibold text-gray-900 mb-4">Minimum Rating</h3>
+                <div className="space-y-2">
+                  {[4.5, 4.0, 3.5, 3.0, 0].map(rating => (
+                    <button
+                      key={rating}
+                      onClick={() => setMinRating(rating)}
+                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${
+                        minRating === rating
+                          ? 'bg-cyan-500 text-white'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3 h-3 ${
+                              i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span>{rating > 0 ? `${rating} & up` : 'All ratings'}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              <span>Same day delivery in Durban</span>
+
+            <div className="border-t p-4">
+              <button
+                onClick={() => setMobileFiltersOpen(false)}
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-xl font-medium"
+              >
+                Apply Filters
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
+      {/* Rest of the existing layout */}
       <div className="flex">
-        {/* Filters Sidebar - Now full height */}
-        <div className={`w-[280px] min-h-screen bg-white border-r border-cyan-100 p-6 space-y-6 sticky top-0 ${
-          showFilters ? 'block' : 'hidden lg:block'
-        }`}>
+        {/* Sidebar - Hide on mobile */}
+        <div className="hidden lg:block w-[280px] min-h-screen bg-white border-r border-cyan-100 p-6 space-y-6 sticky top-0">
           {/* Active Filters */}
           {(selectedCategory !== 'All Categories' || selectedBrand !== 'All Brands' || selectedPriceRange.label !== 'All Prices' || inStockOnly || promotedOnly || minRating > 0) && (
-            <div className="bg-cyan-50 rounded-2xl p-6 shadow-sm border border-cyan-100">
+            <div className="bg-cyan-50 rounded-2xl p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-900">Active Filters</h3>
                 <button
@@ -389,19 +628,16 @@ const AllProductsPage = () => {
           )}
 
           {/* Categories Filter */}
-          <div className="bg-white rounded-2xl shadow-sm border border-cyan-100">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Package className="w-5 h-5 text-cyan-600" />
-              Categories
-            </h3>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+          <div className="bg-white rounded-2xl p-4 border border-cyan-100">
+            <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
+            <div className="space-y-2">
               {categories.map(category => {
                 const IconComponent = category.icon;
                 return (
                   <button
                     key={category.name}
                     onClick={() => setSelectedCategory(category.name)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm ${
                       selectedCategory === category.name
                         ? 'bg-cyan-500 text-white'
                         : 'text-gray-700 hover:bg-gray-100'
@@ -419,9 +655,9 @@ const AllProductsPage = () => {
           </div>
 
           {/* Brand Filter */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-cyan-100">
+          <div className="bg-white rounded-2xl p-4 border border-cyan-100">
             <h3 className="font-semibold text-gray-900 mb-4">Brands</h3>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
+            <div className="space-y-2">
               {brands.map(brand => (
                 <button
                   key={brand}
@@ -439,7 +675,7 @@ const AllProductsPage = () => {
           </div>
 
           {/* Price Range Filter */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-cyan-100">
+          <div className="bg-white rounded-2xl p-4 border border-cyan-100">
             <h3 className="font-semibold text-gray-900 mb-4">Price Range</h3>
             <div className="space-y-2">
               {priceRanges.map(range => (
@@ -458,9 +694,34 @@ const AllProductsPage = () => {
             </div>
           </div>
 
+          {/* Additional Filters */}
+          <div className="bg-white rounded-2xl p-4 border border-cyan-100">
+            <h3 className="font-semibold text-gray-900 mb-4">Additional Filters</h3>
+            <div className="space-y-4">
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={inStockOnly}
+                  onChange={(e) => setInStockOnly(e.target.checked)}
+                  className="w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500"
+                />
+                <span className="text-sm text-gray-700">In Stock Only</span>
+              </label>
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={promotedOnly}
+                  onChange={(e) => setPromotedOnly(e.target.checked)}
+                  className="w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500"
+                />
+                <span className="text-sm text-gray-700">Featured Products</span>
+              </label>
+            </div>
+          </div>
+
           {/* Rating Filter */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-cyan-100">
-            <h3 className="font-semibold mb-4 text-gray-900">Minimum Rating</h3>
+          <div className="bg-white rounded-2xl p-4 border border-cyan-100">
+            <h3 className="font-semibold text-gray-900 mb-4">Minimum Rating</h3>
             <div className="space-y-2">
               {[4.5, 4.0, 3.5, 3.0, 0].map(rating => (
                 <button
@@ -487,73 +748,43 @@ const AllProductsPage = () => {
               ))}
             </div>
           </div>
-
-          {/* Additional Filters */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-cyan-100">
-            <h3 className="font-semibold text-gray-900 mb-4">Filters</h3>
-            <div className="space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={inStockOnly}
-                  onChange={(e) => setInStockOnly(e.target.checked)}
-                  className="w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500"
-                />
-                <span className="text-sm text-gray-700">In Stock Only</span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={promotedOnly}
-                  onChange={(e) => setPromotedOnly(e.target.checked)}
-                  className="w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500"
-                />
-                <span className="text-sm text-gray-700">Featured Products</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Special Offers */}
-          <div className="bg-gradient-to-r from-orange-400 to-pink-500 rounded-2xl p-6 text-white">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Tag className="w-6 h-6" />
-              </div>
-              <h3 className="font-semibold mb-2">Flash Sale!</h3>
-              <p className="text-sm opacity-90 mb-4">Up to 30% off selected cleaning supplies. Limited time offer!</p>
-              <button className="bg-white text-orange-500 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors">
-                Shop Now
-              </button>
-            </div>
-          </div>
         </div>
 
-        {/* Main Content Area - Takes remaining space */}
-        <div className="flex-1 p-6 lg:p-8">
-          {/* Top Bar */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-cyan-100 mb-6">
+        {/* Main Content - Modified for mobile */}
+        <div className="flex-1 p-4 sm:p-6 lg:p-8">
+          {/* Top Bar - Modified for mobile */}
+          <div className="flex flex-col gap-4 bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-cyan-100 mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                 {searchQuery ? `Search Results for "${searchQuery}"` : selectedCategory}
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm sm:text-base">
                 Showing {filteredProducts.length} of {allProducts.length} products
                 {selectedCategory !== 'All Categories' && ` in ${selectedCategory}`}
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              {/* Mobile Filter Toggle */}
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="lg:hidden flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl border border-gray-200"
-              >
-                <Filter className="w-4 h-4" />
-                Filters
-              </button>
+            <div className="flex flex-wrap items-center gap-4">
+              {/* Sort Dropdown - Full width on mobile */}
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <ArrowUpDown className="w-4 h-4 text-gray-500" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="flex-1 border-gray-200 rounded-lg text-gray-700 text-sm focus:ring-2 focus:ring-cyan-400 bg-white"
+                >
+                  <option value="featured">Featured</option>
+                  <option value="newest">Newest</option>
+                  <option value="popular">Most Popular</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Highest Rated</option>
+                  <option value="discount">Best Deals</option>
+                </select>
+              </div>
 
               {/* View Mode Toggle */}
-              <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <div className="flex items-center bg-gray-100 rounded-lg p-1 ml-auto">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-md transition-colors ${
@@ -571,91 +802,42 @@ const AllProductsPage = () => {
                   <List className="w-4 h-4" />
                 </button>
               </div>
-
-              {/* Sort Dropdown */}
-              <div className="flex items-center gap-2">
-                <ArrowUpDown className="w-4 h-4 text-gray-500" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="border-gray-200 rounded-lg text-gray-700 text-sm focus:ring-2 focus:ring-cyan-400 bg-white"
-                >
-                  <option value="featured">Featured</option>
-                  <option value="newest">Newest</option>
-                  <option value="popular">Most Popular</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Highest Rated</option>
-                  <option value="discount">Best Deals</option>
-                </select>
-              </div>
             </div>
           </div>
 
-          {/* Featured/Promoted Products Banner */}
-          {!searchQuery && selectedCategory === 'All Categories' && (
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl p-6 text-white relative overflow-hidden mb-6">
-              <div className="absolute inset-0 bg-black/10" />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">🔥 Featured Products</h3>
-                    <p className="opacity-90">Hand-picked products with the best reviews and value</p>
-                  </div>
-                  <TrendingUp className="w-8 h-8 opacity-75" />
+          {/* Product Grid - Modified for mobile */}
+          <div className={`
+            ${viewMode === 'grid' 
+              ? 'grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6' 
+              : 'space-y-4'
+            }
+          `}>
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-2xl border border-gray-200">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-8 h-8 text-gray-400" />
                 </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
+                <p className="text-gray-600 mb-4">
+                  Try adjusting your search terms or filters to find what you're looking for.
+                </p>
                 <button
-                  onClick={() => setPromotedOnly(!promotedOnly)}
-                  className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  onClick={clearAllFilters}
+                  className="bg-cyan-500 text-white px-6 py-2 rounded-lg hover:bg-cyan-600 transition-colors"
                 >
-                  {promotedOnly ? 'Show All Products' : 'View Featured Only'}
+                  Clear All Filters
                 </button>
               </div>
-            </div>
-          )}
-
-          {/* Product Grid/List */}
-          {filteredProducts.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-2xl border border-gray-200">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
-              <p className="text-gray-600 mb-4">
-                Try adjusting your search terms or filters to find what you're looking for.
-              </p>
-              <button
-                onClick={clearAllFilters}
-                className="bg-cyan-500 text-white px-6 py-2 rounded-lg hover:bg-cyan-600 transition-colors"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          ) : (
-            <div className={`
-              ${viewMode === 'grid' 
-                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6' 
-                : 'space-y-4'
-              }
-            `}>
-              {filteredProducts.map((product) => (
+            ) : (
+              filteredProducts.map((product) => (
                 <ProductCard 
                   key={product.id} 
                   product={product} 
                   isListView={viewMode === 'list'} 
                 />
-              ))}
-            </div>
-          )}
-
-          {/* Load More Button (if needed) */}
-          {filteredProducts.length > 0 && filteredProducts.length >= 12 && (
-            <div className="text-center pt-8">
-              <button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-8 py-3 rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 font-medium">
-                Load More Products
-              </button>
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </div>
       </div>
 

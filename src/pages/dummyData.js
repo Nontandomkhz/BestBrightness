@@ -206,6 +206,21 @@ const useStore = create((set, get) => ({
     brand: "PowerWash",
     inStock: true,
     features: ["Concentrated", "Biodegradable", "Vehicle safe"]
+  },
+  {
+    id: 13,
+    name: "Professional Cleaning Robot",
+    price: 1299.99,
+    originalPrice: 1599.99,
+    image: "https://images.unsplash.com/photo-1589942185517-2442e3a3e25a?w=400&h=400&fit=crop&crop=center",
+    rating: 4.9,
+    reviews: 156,
+    badge: "Smart Clean",
+    category: "Tools",
+    brand: "RoboClean",
+    inStock: true,
+    features: ["AI Navigation", "Self-charging", "App Control"],
+    promoted: true
   }
 ],
   categories: [
