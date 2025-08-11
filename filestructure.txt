@@ -3,74 +3,279 @@
 ### 📁 File Structure (Frontend)
 
 
-AfriXchange/
+ecommerce-system/
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml
+│   │   ├── deploy.yml
+│   │   └── tests.yml
+│   └── ISSUE_TEMPLATE/
+│       ├── bug_report.md
+│       ├── feature_request.md
+│       └── user_story.md
+│
 ├── public/
-│   └── index.html
-├── src/
-│   ├── assets/                        # Static assets
-│   ├── components/                    # Reusable components
-│   │   ├── Layout/                    # Navbar, Footer, Sidebar
-│   │   ├── ProductCard.jsx
-│   │   ├── BusinessProfileCard.jsx
-│   │   ├── CategoryFilter.jsx
-│   │   ├── BidDialog.jsx
-│   │   └── WalletSummary.jsx
-│   ├── features/                      # Business logic grouped by domain
-│   │   ├── auth/
-│   │   │   ├── authSlice.js
-│   │   │   ├── LoginForm.jsx
-│   │   │   └── RegisterForm.jsx
-│   │   ├── users/
-│   │   │   ├── userSlice.js
-│   │   │   ├── AdminUsersPanel.jsx
-│   │   │   └── UserProfileForm.jsx
+│   ├── favicon.ico
+│   ├── logo.svg
+│   ├── images/
 │   │   ├── products/
-│   │   │   ├── productSlice.js
-│   │   │   ├── ProductForm.jsx
-│   │   │   ├── ProductList.jsx
-│   │   │   └── ProductDetail.jsx
-│   │   ├── ongoing/
-│   │   │   ├── ongoingSlice.js
-│   │   │   ├── OngoingForm.jsx
-│   │   │   ├── OngoingSupplyList.jsx
-│   │   │   └── OngoingDetail.jsx
-│   │   ├── orders/
-│   │   │   ├── orderSlice.js
-│   │   │   ├── OrderList.jsx
-│   │   │   └── OrderDetail.jsx
-│   │   ├── wallet/
-│   │   │   ├── walletSlice.js
-│   │   │   └── WalletHistory.jsx
+│   │   ├── promotions/
+│   │   └── placeholders/
+│   └── icons/
+│
+├── src/
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Layout.jsx
+│   │   │   ├── Header.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   └── Navigation.jsx
+│   │   │
+│   │   ├── ui/
+│   │   │   ├── Button.jsx
+│   │   │   ├── Input.jsx
+│   │   │   ├── Select.jsx
+│   │   │   ├── TextArea.jsx
+│   │   │   ├── Modal.jsx
+│   │   │   ├── Spinner.jsx
+│   │   │   ├── Alert.jsx
+│   │   │   ├── Badge.jsx
+│   │   │   ├── Card.jsx
+│   │   │   ├── Tabs.jsx
+│   │   │   └── Pagination.jsx
+│   │   │
+│   │   ├── forms/
+│   │   │   ├── LoginForm.jsx
+│   │   │   ├── RegisterForm.jsx
+│   │   │   ├── CheckoutForm.jsx
+│   │   │   ├── SearchBox.jsx
+│   │   │   ├── FilterDropdown.jsx
+│   │   │   └── ValidationMessage.jsx
+│   │   │
+│   │   ├── feedback/
+│   │   │   ├── ToastNotification.jsx
+│   │   │   ├── ConfirmationDialog.jsx
+│   │   │   └── EmptyState.jsx
+│   │   │
+│   │   ├── promotions/
+│   │   │   ├── PromotionBanner.jsx
+│   │   │   ├── PromotionCard.jsx
+│   │   │   ├── PromotionGrid.jsx
+│   │   │   ├── PromotionBadge.jsx
+│   │   │   ├── PromotionDetails.jsx
+│   │   │   ├── CountdownTimer.jsx
+│   │   │   ├── FlashSaleAlert.jsx
+│   │   │   └── PromotionNotifications.jsx
+│   │   │
+│   │   ├── combos/
+│   │   │   ├── ComboCard.jsx
+│   │   │   ├── ComboGrid.jsx
+│   │   │   ├── ComboBuilder.jsx
+│   │   │   ├── ComboPreview.jsx
+│   │   │   ├── ComboSuggestions.jsx
+│   │   │   ├── SavingsCalculator.jsx
+│   │   │   └── AddComboToCart.jsx
+│   │   │
+│   │   ├── pricing/
+│   │   │   ├── PriceDisplay.jsx
+│   │   │   ├── PriceBreakdown.jsx
+│   │   │   ├── SavingsIndicator.jsx
+│   │   │   ├── PriceHistory.jsx
+│   │   │   └── DynamicPricing.jsx
+│   │   │
+│   │   ├── barcode/
+│   │   │   ├── BarcodeScanner.jsx
+│   │   │   ├── BarcodeDisplay.jsx
+│   │   │   ├── BarcodeGenerator.jsx
+│   │   │   ├── BarcodePrinter.jsx
+│   │   │   └── BarcodeValidator.jsx
+│   │   │
+│   │   ├── loyalty/
+│   │   │   ├── LoyaltyPointsBalance.jsx
+│   │   │   ├── LoyaltyPointsRedemption.jsx
+│   │   │   ├── LoyaltyTierDisplay.jsx
+│   │   │   ├── PointsHistory.jsx
+│   │   │   └── LoyaltyWelcome.jsx
+│   │   │
+│   │   └── analytics/
+│   │       ├── PromotionMetrics.jsx
+│   │       ├── ComboPerformance.jsx
+│   │       ├── ROICalculator.jsx
+│   │       ├── CustomerSegmentAnalysis.jsx
+│   │       └── RecommendationEngine.jsx
+│   │
 │   ├── pages/
-│   │   ├── Home.jsx
-│   │   ├── Marketplace.jsx
-│   │   ├── ProductDetailPage.jsx
-│   │   ├── OngoingSupplyPage.jsx
-│   │   ├── BusinessProfilePage.jsx
-│   │   ├── OrdersPage.jsx
-│   │   ├── WalletPage.jsx
-│   │   ├── Admin/
-│   │   │   ├── AdminDashboard.jsx
-│   │   │   ├── ManageUsers.jsx
-│   │   │   ├── ManageListings.jsx
-│   │   │   ├── ReviewModeration.jsx
-│   │   │   └── AnalyticsPanel.jsx
-│   │   ├── routes/
-│   │   │   ├── AppRoutes.jsx
-│   │   │   └── ProtectedRoute.jsx
-│   │   │  
-│   ├── services/                      # Firebase functions and API wrappers
-│   │   ├── firebase.js
-│   │   ├── firestoreService.js
+│   │   ├── auth/
+│   │   │   ├── Login.jsx
+│   │   │   └── Register.jsx
+│   │   │
+│   │   ├── customer/
+│   │   │   ├── Home.jsx
+│   │   │   ├── Products.jsx
+│   │   │   ├── ProductDetails.jsx
+│   │   │   ├── Cart.jsx
+│   │   │   ├── Checkout.jsx
+│   │   │   ├── Orders.jsx
+│   │   │   ├── Account.jsx
+│   │   │   ├── Promotions.jsx
+│   │   │   ├── Combos.jsx
+│   │   │   ├── FlashSales.jsx
+│   │   │   └── LoyaltyProgram.jsx
+│   │   │
+│   │   ├── cashier/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── POS.jsx
+│   │   │   ├── Payments.jsx
+│   │   │   ├── Reports.jsx
+│   │   │   └── PromotionManagement.jsx
+│   │   │
+│   │   ├── admin/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Inventory.jsx
+│   │   │   ├── Orders.jsx
+│   │   │   ├── Customers.jsx
+│   │   │   ├── Users.jsx
+│   │   │   ├── Reports.jsx
+│   │   │   ├── Promotions.jsx
+│   │   │   ├── Combos.jsx
+│   │   │   ├── FlashSales.jsx
+│   │   │   ├── Barcodes.jsx
+│   │   │   ├── LoyaltyProgram.jsx
+│   │   │   └── PromotionAnalytics.jsx
+│   │   │
+│   │   └── common/
+│   │       ├── NotFound.jsx
+│   │       ├── Unauthorized.jsx
+│   │       └── ErrorPage.jsx
+│   │
+│   ├── routes/
+│   │   ├── AppRoute.jsx
+│   │   ├── PrivateRoute.jsx
+│   │   └── RoleRoute.jsx
+│   │
+│   ├── hooks/
+│   │   ├── useAuth.js
+│   │   ├── useCart.js
+│   │   ├── useProducts.js
+│   │   ├── useOrders.js
+│   │   ├── useInventory.js
+│   │   ├── useReports.js
+│   │   ├── usePagination.js
+│   │   ├── useDebounce.js
+│   │   ├── usePromotions.js
+│   │   ├── useCombos.js
+│   │   ├── useBarcode.js
+│   │   ├── useLoyalty.js
+│   │   ├── useFlashSales.js
+│   │   ├── usePricing.js
+│   │   └── useAnalytics.js
+│   │
+│   ├── services/
+│   │   ├── api.js
 │   │   ├── authService.js
-│   │   └── walletService.js
+│   │   ├── productService.js
+│   │   ├── orderService.js
+│   │   ├── inventoryService.js
+│   │   ├── reportService.js
+│   │   ├── paymentService.js
+│   │   ├── promotionService.js
+│   │   ├── comboService.js
+│   │   ├── barcodeService.js
+│   │   ├── loyaltyService.js
+│   │   ├── flashSaleService.js
+│   │   ├── pricingService.js
+│   │   └── analyticsService.js
+│   │
+│   ├── store/
+│   │   ├── index.js
+│   │   ├── authSlice.js
+│   │   ├── cartSlice.js
+│   │   ├── productSlice.js
+│   │   ├── orderSlice.js
+│   │   ├── inventorySlice.js
+│   │   ├── uiSlice.js
+│   │   ├── promotionSlice.js
+│   │   ├── comboSlice.js
+│   │   ├── loyaltySlice.js
+│   │   ├── flashSaleSlice.js
+│   │   └── notificationSlice.js
+│   │
+│   ├── utils/
+│   │   ├── constants.js
+│   │   ├── formatters.js
+│   │   ├── validators.js
+│   │   ├── helpers.js
+│   │   ├── dateUtils.js
+│   │   ├── priceUtils.js
+│   │   ├── imageUtils.js
+│   │   ├── exportUtils.js
+│   │   ├── barcodeUtils.js
+│   │   ├── promotionUtils.js
+│   │   ├── comboUtils.js
+│   │   ├── loyaltyUtils.js
+│   │   ├── pricingUtils.js
+│   │   └── analyticsUtils.js
+│   │
 │   ├── styles/
-│   │   ├── variables.scss
-│   │   └── glass.scss
+│   │   ├── globals.css
+│   │   └── components.css
+│   │
 │   ├── App.jsx
-│   └── main.jsx
-├── tailwind.config.js
+│   ├── main.jsx
+│   └── vite-env.d.js
+│
+├── supabase/
+│   ├── migrations/
+│   │   ├── 001_initial_schema.sql
+│   │   ├── 002_products_table.sql
+│   │   ├── 003_orders_table.sql
+│   │   ├── 004_customers_table.sql
+│   │   ├── 005_inventory_table.sql
+│   │   ├── 006_users_table.sql
+│   │   └── 007_reports_views.sql
+│   ├── functions/
+│   │   ├── auth-hooks/
+│   │   ├── payment-webhook/
+│   │   └── email-notifications/
+│   ├── seed/
+│   │   ├── products.sql
+│   │   ├── categories.sql
+│   │   └── sample_data.sql
+│   └── config.toml
+│
+├── docs/
+│   ├── setup.md
+│   ├── deployment.md
+│   ├── api-documentation.md
+│   ├── user-guides/
+│   │   ├── customer-guide.md
+│   │   ├── cashier-guide.md
+│   │   └── admin-guide.md
+│   └── development/
+│       ├── coding-standards.md
+│       ├── component-guidelines.md
+│       └── testing-strategy.md
+│
+├── tests/
+│   ├── __mocks__/
+│   ├── components/
+│   ├── pages/
+│   ├── hooks/
+│   ├── services/
+│   ├── utils/
+│   ├── setup.js
+│   └── test-utils.jsx
+│
+├── .env.example
+├── .env.local
+├── .gitignore
+├── package.json
+├── package-lock.json
 ├── vite.config.js
-└── package.json
-
-
+├── tailwind.config.js
+├── jsconfig.json
+├── eslint.config.js
+├── prettier.config.js
+├── vitest.config.js
+└── README.md
