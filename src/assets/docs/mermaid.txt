@@ -1,0 +1,519 @@
+erDiagram
+    %% Core User & Authentication Tables
+    users {
+        uuid id PK
+        varchar email UK "NOT NULL"
+        varchar password_hash "NOT NULL"
+        user_role role "DEFAULT customer"
+        varchar first_name "NOT NULL"
+        varchar last_name "NOT NULL"
+        varchar phone
+        text avatar_url
+        boolean is_active "DEFAULT TRUE"
+        boolean email_verified "DEFAULT FALSE"
+        varchar email_verification_token
+        varchar password_reset_token
+        timestamp password_reset_expires
+        timestamp last_login
+        integer login_attempts "DEFAULT 0"
+        timestamp locked_until
+        boolean two_factor_enabled "DEFAULT FALSE"
+        varchar two_factor_secret
+        integer loyalty_points "DEFAULT 0"
+        decimal total_spent "DEFAULT 0"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    user_profiles {
+        uuid id PK
+        uuid user_id FK "REFERENCES users(id)"
+        date date_of_birth
+        varchar gender
+        text bio
+        jsonb preferences "DEFAULT '{}'"
+        jsonb notification_settings "DEFAULT '{}'"
+        varchar timezone "DEFAULT 'Africa/Johannesburg'"
+        varchar language "DEFAULT 'en'"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    addresses {
+        uuid id PK
+        uuid user_id FK "REFERENCES users(id)"
+        address_type type "DEFAULT 'shipping'"
+        varchar first_name "NOT NULL"
+        varchar last_name "NOT NULL"
+        varchar company
+        varchar address_line_1 "NOT NULL"
+        varchar address_line_2
+        varchar city "NOT NULL"
+        varchar state_province "NOT NULL"
+        varchar postal_code "NOT NULL"
+        varchar country "DEFAULT 'ZA'"
+        varchar phone
+        boolean is_default "DEFAULT FALSE"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% Product Catalog Tables
+    categories {
+        uuid id PK
+        varchar name "NOT NULL"
+        varchar slug UK "NOT NULL"
+        text description
+        uuid parent_id FK "REFERENCES categories(id)"
+        varchar image_url
+        boolean is_active "DEFAULT TRUE"
+        integer sort_order "DEFAULT 0"
+        varchar seo_title
+        text seo_description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    products {
+        uuid id PK
+        varchar sku UK "NOT NULL"
+        varchar barcode UK "NOT NULL"
+        varchar name "NOT NULL"
+        varchar slug UK "NOT NULL"
+        text description
+        text short_description
+        uuid category_id FK "REFERENCES categories(id)"
+        varchar brand
+        decimal price "NOT NULL"
+        decimal cost_price
+        decimal compare_at_price
+        decimal current_price "GENERATED STORED"
+        decimal weight
+        jsonb dimensions
+        product_status status "DEFAULT active"
+        boolean is_featured "DEFAULT FALSE"
+        boolean requires_shipping "DEFAULT TRUE"
+        boolean is_taxable "DEFAULT TRUE"
+        decimal tax_rate "DEFAULT 0.15"
+        text[] tags
+        jsonb attributes "DEFAULT '{}'"
+        varchar seo_title
+        text seo_description
+        decimal rating_average "DEFAULT 0"
+        integer rating_count "DEFAULT 0"
+        integer view_count "DEFAULT 0"
+        boolean is_combo_eligible "DEFAULT TRUE"
+        integer min_quantity "DEFAULT 1"
+        integer max_quantity_per_order
+        uuid created_by FK "REFERENCES users(id)"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    product_images {
+        uuid id PK
+        uuid product_id FK "REFERENCES products(id) ON DELETE CASCADE"
+        varchar filename "NOT NULL"
+        text url "NOT NULL"
+        text alt_text
+        integer sort_order "DEFAULT 0"
+        boolean is_primary "DEFAULT FALSE"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    inventory {
+        uuid id PK
+        uuid product_id FK "REFERENCES products(id) ON DELETE CASCADE"
+        integer quantity_available "DEFAULT 0"
+        integer quantity_reserved "DEFAULT 0"
+        integer quantity_on_order "DEFAULT 0"
+        integer reorder_point "DEFAULT 10"
+        integer reorder_quantity "DEFAULT 50"
+        boolean track_inventory "DEFAULT TRUE"
+        boolean allow_backorders "DEFAULT FALSE"
+        timestamp last_updated "DEFAULT NOW()"
+    }
+
+    inventory_movements {
+        uuid id PK
+        uuid product_id FK "REFERENCES products(id)"
+        movement_type type "NOT NULL"
+        integer quantity "NOT NULL"
+        integer quantity_after "NOT NULL"
+        varchar reason_code
+        text notes
+        decimal unit_cost
+        uuid reference_id
+        varchar reference_type
+        uuid created_by FK "REFERENCES users(id)"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% Promotion System Tables
+    promotions {
+        uuid id PK
+        varchar name "NOT NULL"
+        text description
+        promotion_type type "NOT NULL"
+        promotion_status status "DEFAULT draft"
+        integer priority "DEFAULT 0"
+        discount_type discount_type "NOT NULL"
+        decimal discount_value "NOT NULL"
+        integer minimum_quantity "DEFAULT 1"
+        integer maximum_quantity
+        decimal minimum_order_amount
+        decimal maximum_discount_amount
+        integer usage_limit
+        integer usage_limit_per_customer "DEFAULT 1"
+        integer times_used "DEFAULT 0"
+        boolean requires_code "DEFAULT FALSE"
+        varchar promo_code UK
+        boolean stackable "DEFAULT FALSE"
+        boolean applies_to_sale_items "DEFAULT TRUE"
+        jsonb customer_eligibility "DEFAULT '{}'"
+        timestamp starts_at "NOT NULL"
+        timestamp ends_at
+        boolean is_featured "DEFAULT FALSE"
+        text banner_image_url
+        text terms_conditions
+        uuid created_by FK "REFERENCES users(id)"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    promotion_products {
+        uuid id PK
+        uuid promotion_id FK "REFERENCES promotions(id) ON DELETE CASCADE"
+        uuid product_id FK "REFERENCES products(id) ON DELETE CASCADE"
+        decimal discounted_price "NOT NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    promotion_categories {
+        uuid id PK
+        uuid promotion_id FK "REFERENCES promotions(id) ON DELETE CASCADE"
+        uuid category_id FK "REFERENCES categories(id) ON DELETE CASCADE"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    customer_promotions_usage {
+        uuid id PK
+        uuid customer_id FK "REFERENCES users(id) ON DELETE CASCADE"
+        uuid promotion_id FK "REFERENCES promotions(id) ON DELETE CASCADE"
+        uuid order_id FK "REFERENCES orders(id)"
+        integer usage_count "DEFAULT 1"
+        decimal discount_applied "NOT NULL"
+        timestamp used_at "DEFAULT NOW()"
+    }
+
+    %% Combo Deal System Tables
+    combos {
+        uuid id PK
+        varchar name "NOT NULL"
+        text description
+        combo_type combo_type "DEFAULT bundle"
+        combo_status status "DEFAULT active"
+        decimal original_price "NOT NULL"
+        decimal combo_price "NOT NULL"
+        decimal savings_amount "GENERATED STORED"
+        decimal savings_percentage "GENERATED STORED"
+        text image_url
+        boolean is_featured "DEFAULT FALSE"
+        integer minimum_quantity "DEFAULT 1"
+        integer maximum_quantity "DEFAULT 10"
+        integer usage_limit
+        integer times_purchased "DEFAULT 0"
+        boolean requires_all_items "DEFAULT TRUE"
+        timestamp starts_at "DEFAULT NOW()"
+        timestamp ends_at
+        text[] tags
+        uuid created_by FK "REFERENCES users(id)"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    combo_items {
+        uuid id PK
+        uuid combo_id FK "REFERENCES combos(id) ON DELETE CASCADE"
+        uuid product_id FK "REFERENCES products(id) ON DELETE CASCADE"
+        integer quantity "DEFAULT 1"
+        boolean is_required "DEFAULT TRUE"
+        boolean can_substitute "DEFAULT FALSE"
+        uuid substitute_category_id FK "REFERENCES categories(id)"
+        integer sort_order "DEFAULT 0"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% Flash Sales Tables
+    flash_sales {
+        uuid id PK
+        varchar name "NOT NULL"
+        text description
+        text banner_image_url
+        timestamp starts_at "NOT NULL"
+        timestamp ends_at "NOT NULL"
+        integer max_quantity_per_customer "DEFAULT 1"
+        integer total_quantity_limit
+        integer quantity_sold "DEFAULT 0"
+        boolean notification_sent "DEFAULT FALSE"
+        flash_sale_status status "DEFAULT scheduled"
+        uuid created_by FK "REFERENCES users(id)"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    flash_sale_items {
+        uuid id PK
+        uuid flash_sale_id FK "REFERENCES flash_sales(id) ON DELETE CASCADE"
+        uuid product_id FK "REFERENCES products(id) ON DELETE CASCADE"
+        decimal original_price "NOT NULL"
+        decimal flash_price "NOT NULL"
+        integer quantity_limit
+        integer quantity_sold "DEFAULT 0"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% Shopping Cart Tables
+    shopping_carts {
+        uuid id PK
+        uuid customer_id FK "REFERENCES users(id) ON DELETE CASCADE"
+        varchar session_id
+        decimal subtotal "DEFAULT 0"
+        decimal tax_amount "DEFAULT 0"
+        decimal total_amount "DEFAULT 0"
+        jsonb applied_promotions "DEFAULT '[]'"
+        jsonb applied_combos "DEFAULT '[]'"
+        timestamp expires_at
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    cart_items {
+        uuid id PK
+        uuid cart_id FK "REFERENCES shopping_carts(id) ON DELETE CASCADE"
+        uuid product_id FK "REFERENCES products(id) ON DELETE CASCADE"
+        uuid combo_id FK "REFERENCES combos(id) ON DELETE CASCADE"
+        order_item_type item_type "DEFAULT product"
+        integer quantity "NOT NULL"
+        decimal unit_price "NOT NULL"
+        decimal total_price "NOT NULL"
+        uuid promotion_id FK "REFERENCES promotions(id)"
+        decimal promotion_discount "DEFAULT 0"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% Order Management Tables
+    orders {
+        uuid id PK
+        varchar order_number UK "NOT NULL"
+        uuid customer_id FK "REFERENCES users(id)"
+        order_status status "DEFAULT pending"
+        payment_status payment_status "DEFAULT pending"
+        fulfillment_status fulfillment_status "DEFAULT unfulfilled"
+        order_channel channel "DEFAULT online"
+        varchar currency "DEFAULT ZAR"
+        decimal subtotal "NOT NULL"
+        decimal tax_amount "DEFAULT 0"
+        decimal shipping_amount "DEFAULT 0"
+        decimal discount_amount "DEFAULT 0"
+        decimal promotion_discount "DEFAULT 0"
+        decimal combo_discount "DEFAULT 0"
+        integer loyalty_points_used "DEFAULT 0"
+        decimal loyalty_discount "DEFAULT 0"
+        decimal total_amount "NOT NULL"
+        text notes
+        text[] tags
+        jsonb applied_promotions "DEFAULT '[]'"
+        jsonb applied_combos "DEFAULT '[]'"
+        uuid processed_by FK "REFERENCES users(id)"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp shipped_at
+        timestamp delivered_at
+        timestamp cancelled_at
+        text cancellation_reason
+    }
+
+    order_items {
+        uuid id PK
+        uuid order_id FK "REFERENCES orders(id) ON DELETE CASCADE"
+        uuid product_id FK "REFERENCES products(id)"
+        uuid combo_id FK "REFERENCES combos(id)"
+        order_item_type item_type "DEFAULT product"
+        varchar product_name "NOT NULL"
+        varchar product_sku "NOT NULL"
+        integer quantity "NOT NULL"
+        decimal unit_price "NOT NULL"
+        decimal original_unit_price "NOT NULL"
+        decimal discount_per_unit "DEFAULT 0"
+        decimal total_price "NOT NULL"
+        decimal tax_rate "DEFAULT 0"
+        decimal tax_amount "DEFAULT 0"
+        uuid promotion_id FK "REFERENCES promotions(id)"
+        decimal promotion_discount "DEFAULT 0"
+        jsonb product_snapshot
+        jsonb combo_snapshot
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% Payment Tables
+    payments {
+        uuid id PK
+        uuid order_id FK "REFERENCES orders(id)"
+        payment_method method "NOT NULL"
+        payment_status status "DEFAULT pending"
+        varchar gateway "NOT NULL"
+        varchar gateway_transaction_id
+        decimal amount "NOT NULL"
+        varchar currency "DEFAULT ZAR"
+        decimal gateway_fee "DEFAULT 0"
+        jsonb gateway_response
+        text failure_reason
+        timestamp processed_at
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% Loyalty System Tables
+    loyalty_transactions {
+        uuid id PK
+        uuid customer_id FK "REFERENCES users(id) ON DELETE CASCADE"
+        loyalty_transaction_type transaction_type "NOT NULL"
+        integer points "NOT NULL"
+        integer balance_after "NOT NULL"
+        uuid order_id FK "REFERENCES orders(id)"
+        uuid promotion_id FK "REFERENCES promotions(id)"
+        varchar description
+        timestamp expires_at
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    loyalty_tiers {
+        uuid id PK
+        varchar name "NOT NULL"
+        integer minimum_points "NOT NULL"
+        decimal minimum_spent "NOT NULL"
+        jsonb benefits "DEFAULT '{}'"
+        decimal discount_percentage "DEFAULT 0"
+        boolean free_shipping "DEFAULT FALSE"
+        boolean early_access "DEFAULT FALSE"
+        integer birthday_bonus "DEFAULT 0"
+        boolean is_active "DEFAULT TRUE"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    loyalty_rules {
+        uuid id PK
+        varchar name "NOT NULL"
+        loyalty_rule_type rule_type "NOT NULL"
+        integer points_per_action "NOT NULL"
+        decimal minimum_order_amount
+        uuid[] applicable_categories
+        uuid[] applicable_products
+        decimal multiplier "DEFAULT 1.0"
+        boolean is_active "DEFAULT TRUE"
+        timestamp starts_at "DEFAULT NOW()"
+        timestamp ends_at
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% System Tables
+    audit_logs {
+        uuid id PK
+        uuid user_id FK "REFERENCES users(id)"
+        varchar table_name "NOT NULL"
+        varchar operation "NOT NULL"
+        uuid record_id "NOT NULL"
+        jsonb old_values
+        jsonb new_values
+        varchar ip_address
+        varchar user_agent
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    notifications {
+        uuid id PK
+        uuid user_id FK "REFERENCES users(id) ON DELETE CASCADE"
+        notification_type type "NOT NULL"
+        varchar title "NOT NULL"
+        text message "NOT NULL"
+        jsonb data "DEFAULT '{}'"
+        boolean is_read "DEFAULT FALSE"
+        notification_channel[] channels
+        timestamp read_at
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    system_settings {
+        uuid id PK
+        varchar key UK "NOT NULL"
+        jsonb value "NOT NULL"
+        varchar description
+        boolean is_public "DEFAULT FALSE"
+        uuid updated_by FK "REFERENCES users(id)"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% Relationships
+    users ||--o{ user_profiles : "has profile"
+    users ||--o{ addresses : "has addresses"
+    users ||--o{ products : "created by"
+    users ||--o{ orders : "places orders"
+    users ||--o{ shopping_carts : "has cart"
+    users ||--o{ loyalty_transactions : "earns points"
+    users ||--o{ customer_promotions_usage : "uses promotions"
+    users ||--o{ notifications : "receives"
+    users ||--o{ audit_logs : "performs actions"
+    users ||--o{ promotions : "created by"
+    users ||--o{ combos : "created by"
+    users ||--o{ flash_sales : "created by"
+
+    categories ||--o{ categories : "parent category"
+    categories ||--o{ products : "belongs to"
+    categories ||--o{ promotion_categories : "in promotion"
+    categories ||--o{ combo_items : "substitute category"
+
+    products ||--o{ product_images : "has images"
+    products ||--|| inventory : "has inventory"
+    products ||--o{ inventory_movements : "movement history"
+    products ||--o{ promotion_products : "in promotion"
+    products ||--o{ combo_items : "in combo"
+    products ||--o{ flash_sale_items : "in flash sale"
+    products ||--o{ cart_items : "in cart"
+    products ||--o{ order_items : "in order"
+
+    promotions ||--o{ promotion_products : "applies to products"
+    promotions ||--o{ promotion_categories : "applies to categories"
+    promotions ||--o{ customer_promotions_usage : "usage tracking"
+    promotions ||--o{ cart_items : "applied to"
+    promotions ||--o{ order_items : "applied to"
+    promotions ||--o{ loyalty_transactions : "bonus from"
+
+    combos ||--o{ combo_items : "contains items"
+    combos ||--o{ cart_items : "in cart"
+    combos ||--o{ order_items : "in order"
+
+    flash_sales ||--o{ flash_sale_items : "contains items"
+
+    shopping_carts ||--o{ cart_items : "contains items"
+
+    orders ||--o{ order_items : "contains items"
+    orders ||--o{ payments : "payment for"
+    orders ||--o{ loyalty_transactions : "earns points"
+    orders ||--o{ customer_promotions_usage : "promotion used"
+
+    loyalty_tiers ||--o{ users : "user tier"
+    loyalty_rules ||--o{ loyalty_transactions : "rule applied"
+
+    %% Styling
+    %%{init: {
+        'theme': 'base',
+        'themeVariables': {
+            'primaryColor': '#ffffff',
+            'primaryTextColor': '#000000',
+            'primaryBorderColor': '#000000',
+            'lineColor': '#000000'
+        }
+    }}%%
